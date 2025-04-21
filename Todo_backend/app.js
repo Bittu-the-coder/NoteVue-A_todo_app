@@ -13,6 +13,27 @@ const noteRoutes = require('./routes/notes.routes');
 
 const app = express();
 
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Notes API</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Notes API</h1>
+        <p>A simple API for creating, reading, updating and deleting notes.</p>
+        <p>Checkout the API documentation at <a href="/api-docs">/api-docs</a></p>
+      </body>
+    </html>
+  `);
+})
+
 // Middleware
 app.use(cors());
 app.use(helmet());
