@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ChevronRight, ChevronLeft, Check, ExternalLink } from "lucide-react";
 
 const onboardingContent = [
   {
@@ -8,7 +10,8 @@ const onboardingContent = [
       "Organize your day, thoughts, and goals — all in one beautifully simple place.",
     buttonText: "Next",
     icon: "📝",
-    handleBtn: () => {},
+    color: "from-blue-600 to-purple-600",
+    decoration: "bg-blue-600/10",
   },
   {
     title: "Capture Everything, Instantly",
@@ -16,6 +19,8 @@ const onboardingContent = [
       "From quick ideas to full tasks — jot down what matters with seamless syncing and intuitive design.",
     buttonText: "Next",
     icon: "⚡",
+    color: "from-purple-600 to-indigo-600",
+    decoration: "bg-purple-600/10",
   },
   {
     title: "Clarity Meets Productivity",
@@ -23,8 +28,32 @@ const onboardingContent = [
       "Focus on what matters with a distraction-free interface and smart organization tools.",
     buttonText: "Get Started",
     icon: "🎯",
+    color: "from-indigo-600 to-blue-600",
+    decoration: "bg-indigo-600/10",
   },
 ];
+
+const fadeInUp = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.6, -0.05, 0.01, 0.99],
+    },
+  },
+};
+
+const stagger = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -35,6 +64,7 @@ function Onboarding() {
       setCurrentStep(currentStep + 1);
     }
   };
+
   const handlePrev = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
@@ -46,79 +76,162 @@ function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 flex flex-col md:flex-row">
-      <div className="md:w-1/2 h-64 md:h-auto relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/30 z-10"></div>
-        <img
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 flex flex-col md:flex-row relative overflow-hidden"
+      initial="hidden"
+      animate="visible"
+      variants={stagger}
+    >
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-400 opacity-10 rounded-full" />
+        <div className="absolute top-1/4 -right-20 w-60 h-60 bg-purple-500 opacity-10 rounded-full" />
+        <div className="absolute -bottom-20 left-1/4 w-40 h-40 bg-indigo-400 opacity-15 rounded-full" />
+      </div>
+
+      {/* Left side - Image */}
+      <motion.div
+        className="md:w-1/2 h-64 md:h-auto relative overflow-hidden"
+        variants={fadeInUp}
+      >
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
+        <motion.img
           src="https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
           alt="Person working on laptop"
           className="w-full h-full object-cover object-center"
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
         />
-        <div className="absolute bottom-8 left-8 z-20 text-white">
-          <h1 className="text-4xl font-bold mb-2">NoteVue</h1>
-          <p className="text-lg opacity-90">Your productivity companion</p>
-        </div>
-      </div>
+        <motion.div
+          className="absolute bottom-8 left-8 z-20 text-white"
+          variants={fadeInUp}
+        >
+          <motion.h1 className="text-4xl font-bold mb-2" variants={fadeInUp}>
+            NoteVue
+          </motion.h1>
+          <motion.p className="text-lg opacity-90" variants={fadeInUp}>
+            Your productivity companion
+          </motion.p>
+        </motion.div>
+      </motion.div>
 
       {/* Right side - Content */}
-      <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+      <motion.div
+        className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center"
+        variants={fadeInUp}
+      >
         <div className="max-w-md mx-auto w-full">
           {/* Step indicators */}
-          <div className="flex justify-center gap-2 mb-8">
+          <motion.div
+            className="flex justify-center gap-2 mb-8"
+            variants={fadeInUp}
+          >
             {onboardingContent.map((_, index) => (
-              <div
+              <motion.div
                 key={index}
-                className={`h-2 w-8 rounded-full transition-all ${
-                  index === currentStep ? "bg-white w-12" : "bg-white/30"
+                className={`h-2 rounded-full transition-all ${
+                  index === currentStep
+                    ? `w-12 bg-gradient-to-r ${onboardingContent[currentStep].color}`
+                    : "w-8 bg-white/30"
                 }`}
+                whileHover={{ scale: 1.1 }}
+                onClick={() => setCurrentStep(index)}
+                style={{ cursor: "pointer" }}
               />
             ))}
-          </div>
+          </motion.div>
 
           {/* Content card */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-lg">
-            <div className="text-5xl mb-6">
+          <motion.div
+            className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-lg relative overflow-hidden"
+            variants={fadeInUp}
+            key={currentStep}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div
+              className={`absolute top-0 right-0 w-32 h-32 rounded-full filter blur-3xl ${onboardingContent[currentStep].decoration} opacity-50`}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 0.7, 0.5],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                repeatType: "reverse",
+              }}
+            />
+
+            <motion.div className="text-5xl mb-6" variants={fadeInUp}>
               {onboardingContent[currentStep].icon}
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-4">
+            </motion.div>
+
+            <motion.h2
+              className="text-3xl font-bold text-white mb-4"
+              variants={fadeInUp}
+            >
               {onboardingContent[currentStep].title}
-            </h2>
-            <p className="text-white/80 mb-8 text-lg">
+            </motion.h2>
+
+            <motion.p
+              className="text-white/80 mb-8 text-lg"
+              variants={fadeInUp}
+            >
               {onboardingContent[currentStep].description}
-            </p>
-            <button
+            </motion.p>
+
+            <motion.button
               onClick={
                 onboardingContent[currentStep].buttonText === "Next"
                   ? handleNext
                   : handleGetStarted
               }
-              className="w-full bg-white text-indigo-900 hover:bg-white/90 transition-colors py-3 px-6 rounded-lg font-semibold text-lg shadow-md"
+              className="w-full bg-gradient-to-r from-white to-white/90 text-indigo-900 hover:bg-white/90 transition-all py-3 px-6 rounded-lg font-semibold text-lg shadow-md flex items-center justify-center gap-2"
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+              }}
+              whileTap={{ scale: 0.98 }}
+              variants={fadeInUp}
             >
               {onboardingContent[currentStep].buttonText}
-            </button>
-          </div>
+              {onboardingContent[currentStep].buttonText === "Next" ? (
+                <ChevronRight size={18} />
+              ) : (
+                <ExternalLink size={18} />
+              )}
+            </motion.button>
+          </motion.div>
 
           {currentStep < onboardingContent.length - 1 && (
-            <>
-              <div className="flex justify-between px-2">
-                <button
-                  onClick={handlePrev}
-                  className="mt-4 text-white/70 hover:text-white transition-colors text-sm"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={() => setCurrentStep(onboardingContent.length - 1)}
-                  className="mt-4 text-white/70 hover:text-white transition-colors text-sm"
-                >
-                  Skip onboarding
-                </button>
-              </div>
-            </>
+            <motion.div
+              className="flex justify-between px-2 mt-4"
+              variants={fadeInUp}
+            >
+              <motion.button
+                onClick={handlePrev}
+                className={`flex items-center text-white/70 hover:text-white transition-colors text-sm ${
+                  currentStep === 0 ? "invisible" : ""
+                }`}
+                whileHover={{ x: -2 }}
+              >
+                <ChevronLeft size={16} />
+                Back
+              </motion.button>
+              <motion.button
+                onClick={() => setCurrentStep(onboardingContent.length - 1)}
+                className="text-white/70 hover:text-white transition-colors text-sm flex items-center"
+                whileHover={{ x: 2 }}
+              >
+                Skip onboarding
+                <ChevronRight size={16} />
+              </motion.button>
+            </motion.div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

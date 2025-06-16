@@ -1,10 +1,8 @@
 const User = require('../models/User.model');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const bcrypt = require('bcryptjs');
 
-// @desc    Register user
-// @route   POST /api/v1/auth/register
-// @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
 
@@ -19,9 +17,6 @@ exports.register = asyncHandler(async (req, res, next) => {
   console.log('User registered successfully:', user._id); // Log the user ID
 });
 
-// @desc    Login user
-// @route   POST /api/v1/auth/login
-// @access  Public
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -55,19 +50,14 @@ exports.login = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Get current logged in user
-// @route   GET /api/v1/auth/me
-// @access  Private
 exports.getMe = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
-
   res.status(200).json({
     success: true,
     data: user
   });
 });
 
-// Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
   const token = user.getSignedJwtToken();
@@ -91,3 +81,44 @@ const sendTokenResponse = (user, statusCode, res) => {
       token
     });
 };
+
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  const fieldsToUpdate = {};
+
+  // Only add fields that are provided
+  if (req.body.username) fieldsToUpdate.username = req.body.username;
+  if (req.body.email) fieldsToUpdate.email = req.body.email;
+  if (req.body.password) {
+    const salt = await bcrypt.genSalt(10);
+    fieldsToUpdate.password = await bcrypt.hash(req.body.password, salt);
+  }
+
+  // Find user and update
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    fieldsToUpdate,
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  if (!user) {
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+
+exports.deleteAccount = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.user.id);
+
+  if (!user) {
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+})

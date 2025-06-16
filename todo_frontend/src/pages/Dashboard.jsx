@@ -280,6 +280,7 @@ import {
   NotebookPen,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { getMe } from "../services/auth";
 
 // Animation variants
 const containerVariants = {
@@ -327,7 +328,23 @@ const floatingAnimation = {
 };
 
 const Dashboard = () => {
-  const user = { name: "Alex" };
+  const [userData, setUserData] = React.useState({
+    username: "",
+  });
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await getMe();
+        setUserData(response);
+        console.log("userData:", response);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
   const [quote, setQuote] = useState({
     content: "Believe you can and you're halfway there.",
     author: "Theodore Roosevelt",
@@ -480,7 +497,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  {user.name}'s Dashboard
+                  {userData.username.split(" ")[0]}'s Dashboard
                 </motion.h1>
                 <motion.p
                   className="text-gray-600 mt-2"
