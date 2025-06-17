@@ -2,9 +2,6 @@ const List = require('../models/List.model');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
-// @desc    Get all lists
-// @route   GET /api/v1/lists
-// @access  Private
 exports.getLists = asyncHandler(async (req, res, next) => {
   const lists = await List.find({ user: req.user.id }).sort({ createdAt: -1 });
 
@@ -15,9 +12,6 @@ exports.getLists = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Create new list
-// @route   POST /api/v1/lists
-// @access  Private
 exports.createList = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
 
@@ -29,9 +23,6 @@ exports.createList = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Update list
-// @route   PUT /api/v1/lists/:id
-// @access  Private
 exports.updateList = asyncHandler(async (req, res, next) => {
   let list = await List.findById(req.params.id);
 
@@ -59,9 +50,6 @@ exports.updateList = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Delete list
-// @route   DELETE /api/v1/lists/:id
-// @access  Private
 exports.deleteList = asyncHandler(async (req, res, next) => {
   const list = await List.findById(req.params.id);
 
@@ -78,7 +66,7 @@ exports.deleteList = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await list.remove();
+  await list.deleteOne();
 
   res.status(200).json({
     success: true,

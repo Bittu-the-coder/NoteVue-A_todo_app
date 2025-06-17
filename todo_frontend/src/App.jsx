@@ -10,6 +10,8 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import TodayTasks from "./pages/Today";
 import UpcomingTasks from "./pages/Upcoming";
+import Tiptap from "./components/Tiptap";
+import { EditorProvider } from "@tiptap/react";
 
 const App = () => {
   return (

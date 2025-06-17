@@ -27,7 +27,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   if (!user) {
     console.log('No user found with this email');
-    return next(new ErrorResponse('Invalid credentials', 401));
+    return next(new ErrorResponse('Please create an account', 401));
   }
 
   // 2. Check if password matches

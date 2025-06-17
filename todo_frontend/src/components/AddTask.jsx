@@ -103,6 +103,21 @@ const AddTaskModal = ({
                   required
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Task Description
+                </label>
+                <textarea
+                  rows="2"
+                  type="text"
+                  value={taskData.description}
+                  onChange={(e) =>
+                    setTaskData({ ...taskData, description: e.target.value })
+                  }
+                  className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                  required
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

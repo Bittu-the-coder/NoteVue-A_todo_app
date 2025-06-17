@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiX } from "react-icons/fi";
 
 const COLORS = [
@@ -9,15 +9,37 @@ const COLORS = [
   { name: "Yellow", value: "#F59E0B" },
 ];
 
-const AddListModal = ({ isOpen, onClose, onSubmit }) => {
+const AddListModal = ({ isOpen, onClose, onSubmit, editingList }) => {
   const [listData, setListData] = useState({
     name: "",
     color: COLORS[0].value,
   });
 
+  // Update form when editing a list
+  useEffect(() => {
+    if (editingList) {
+      setListData({
+        name: editingList.name || "",
+        color: editingList.color || COLORS[0].value,
+      });
+    } else {
+      // Reset form when not editing
+      setListData({
+        name: "",
+        color: COLORS[0].value,
+      });
+    }
+  }, [editingList, isOpen]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(listData);
+    if (editingList) {
+      // If editing, pass the ID with the updated data
+      onSubmit({ ...listData, _id: editingList._id });
+    } else {
+      // If creating new list
+      onSubmit(listData);
+    }
     onClose();
   };
 
@@ -28,7 +50,7 @@ const AddListModal = ({ isOpen, onClose, onSubmit }) => {
       <div className="bg-white rounded-xl w-full max-w-md">
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="text-lg font-semibold text-purple-900">
-            Create New List
+            {editingList ? "Edit List" : "Create New List"}
           </h3>
           <button
             onClick={onClose}
@@ -90,7 +112,7 @@ const AddListModal = ({ isOpen, onClose, onSubmit }) => {
               type="submit"
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
             >
-              Create List
+              {editingList ? "Update List" : "Create List"}
             </button>
           </div>
         </form>

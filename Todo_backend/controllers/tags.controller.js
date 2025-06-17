@@ -2,9 +2,6 @@ const Tag = require('../models/Tag.model');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
-// @desc    Get all tags
-// @route   GET /api/v1/tags
-// @access  Private
 exports.getTags = asyncHandler(async (req, res, next) => {
   const tags = await Tag.find({ user: req.user.id }).sort({ createdAt: -1 });
 
@@ -15,9 +12,6 @@ exports.getTags = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Create new tag
-// @route   POST /api/v1/tags
-// @access  Private
 exports.createTag = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
 
@@ -29,9 +23,6 @@ exports.createTag = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Delete tag
-// @route   DELETE /api/v1/tags/:id
-// @access  Private
 exports.deleteTag = asyncHandler(async (req, res, next) => {
   const tag = await Tag.findById(req.params.id);
 
@@ -48,7 +39,7 @@ exports.deleteTag = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await tag.remove();
+  await tag.deleteOne();
 
   res.status(200).json({
     success: true,

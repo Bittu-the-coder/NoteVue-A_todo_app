@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { FiX, FiTag } from "react-icons/fi";
 import { AiOutlineClose } from "react-icons/ai";
+import { addTag } from "../services/tags";
 
 const AddTagModal = ({ isOpen, onClose, onSubmit }) => {
   const [name, setName] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({ name });
+    const tag = await addTag({ name });
+    setName("");
+    console.log("Tag added:", tag);
+    onSubmit(tag);
     onClose();
   };
 

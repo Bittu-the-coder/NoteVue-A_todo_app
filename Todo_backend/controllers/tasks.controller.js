@@ -2,9 +2,6 @@ const Task = require('../models/Task.model');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
-// @desc    Get all tasks
-// @route   GET /api/v1/tasks
-// @access  Private
 exports.getTasks = asyncHandler(async (req, res, next) => {
   // Filtering
   let query;
@@ -30,9 +27,6 @@ exports.getTasks = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Create new task
-// @route   POST /api/v1/tasks
-// @access  Private
 exports.createTask = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
 
@@ -44,9 +38,6 @@ exports.createTask = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Update task
-// @route   PUT /api/v1/tasks/:id
-// @access  Private
 exports.updateTask = asyncHandler(async (req, res, next) => {
   let task = await Task.findById(req.params.id);
 
@@ -74,9 +65,6 @@ exports.updateTask = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Toggle task completion
-// @route   PATCH /api/v1/tasks/:id/complete
-// @access  Private
 exports.toggleComplete = asyncHandler(async (req, res, next) => {
   let task = await Task.findById(req.params.id);
 
@@ -102,9 +90,7 @@ exports.toggleComplete = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Delete task
-// @route   DELETE /api/v1/tasks/:id
-// @access  Private
+
 exports.deleteTask = asyncHandler(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
 

@@ -1,192 +1,3 @@
-// import React, { useState } from "react";
-// import { Link, useLocation, useNavigate } from "react-router-dom";
-// import {
-//   FiLayout,
-//   FiCheckSquare,
-//   FiFileText,
-//   FiSettings,
-//   FiPlus,
-//   FiTag,
-//   FiLogOut,
-// } from "react-icons/fi";
-// import { RxHamburgerMenu } from "react-icons/rx";
-// import AddListModal from "./AddList";
-
-// const Sidebar = () => {
-//   const { pathname } = useLocation();
-//   const navigation = useNavigate();
-//   const [showListModal, setShowListModal] = useState(false);
-
-//   const handleAddList = (listData) => {
-//     console.log("Adding list:", listData);
-//     // Call your API here
-//   };
-
-//   const navItems = [
-//     {
-//       icon: <FiLayout className="w-5 h-5" />,
-//       label: "Dashboard",
-//       path: "/dashboard",
-//     },
-//     {
-//       icon: <FiCheckSquare className="w-5 h-5" />,
-//       label: "Upcoming",
-//       path: "/upcoming",
-//     },
-//     {
-//       icon: <FiCheckSquare className="w-5 h-5" />,
-//       label: "Today",
-//       path: "/today",
-//     },
-//     {
-//       icon: <FiFileText className="w-5 h-5" />,
-//       label: "Sticky Wall",
-//       path: "/sticky-wall",
-//     },
-//   ];
-
-//   const lists = [
-//     { name: "Personal", count: 7 },
-//     { name: "Work", count: 8 },
-//     { name: "Shopping", count: 0 },
-//   ];
-
-//   const tags = ["Urgent", "Important", "Later"];
-
-//   return (
-//     <aside className="w-64 bg-white/80 backdrop-blur-lg border-r border-purple-100 p-6 h-full flex flex-col">
-//       {/* Logo and Hamburger */}
-//       <div className="flex items-center justify-between mb-8">
-//         <div>
-//           <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-//             NoteVue
-//           </h2>
-//           <p className="text-xs text-purple-400/80">Productivity Suite</p>
-//         </div>
-//         <button className="text-purple-500 hover:text-purple-700 md:hidden">
-//           <RxHamburgerMenu className="w-6 h-6" />
-//         </button>
-//       </div>
-
-//       {/* modal component */}
-//       <AddListModal
-//         isOpen={showListModal}
-//         onClose={() => setShowListModal(false)}
-//         onSubmit={handleAddList}
-//       />
-
-//       {/* Main Navigation */}
-//       <nav className="flex-1 overflow-y-auto">
-//         <ul className="space-y-1">
-//           {navItems.map((item) => (
-//             <li key={item.path}>
-//               <Link
-//                 to={item.path}
-//                 className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-//                   pathname === item.path
-//                     ? "bg-purple-50 text-purple-700"
-//                     : "text-gray-600 hover:bg-purple-50/50 hover:text-purple-600"
-//                 }`}
-//               >
-//                 {item.icon}
-//                 {item.label}
-//               </Link>
-//             </li>
-//           ))}
-//         </ul>
-
-//         {/* Lists Section */}
-//         <div className="mt-8">
-//           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">
-//             Lists
-//           </h3>
-//           <ul className="space-y-1">
-//             {lists.map((list) => (
-//               <li key={list.name}>
-//                 <a
-//                   href="#"
-//                   className="flex items-center justify-between gap-3 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-purple-50/50 hover:text-purple-600 transition-colors"
-//                 >
-//                   <span>{list.name}</span>
-//                   <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
-//                     {list.count}
-//                   </span>
-//                 </a>
-//               </li>
-//             ))}
-//             <li>
-//               <button
-//                 onClick={() => setShowListModal(true)}
-//                 className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium text-purple-600 hover:bg-purple-50/50 w-full transition-colors"
-//               >
-//                 <FiPlus className="w-4 h-4" />
-//                 Add new list
-//               </button>
-//             </li>
-//           </ul>
-//         </div>
-
-//         {/* Tags Section */}
-//         <div className="mt-6">
-//           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">
-//             Tags
-//           </h3>
-//           <div className="flex flex-wrap gap-2 px-4">
-//             {tags.map((tag) => (
-//               <span
-//                 key={tag}
-//                 className="text-xs bg-purple-50 text-purple-600 px-3 py-1 rounded-full flex items-center gap-1"
-//               >
-//                 <FiTag className="w-3 h-3" />
-//                 {tag}
-//               </span>
-//             ))}
-//           </div>
-//         </div>
-//       </nav>
-
-//       {/* Settings */}
-//       <div className="mt-auto pt-4">
-//         <Link
-//           to="/settings"
-//           className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-//             pathname === "/settings"
-//               ? "bg-purple-50 text-purple-700"
-//               : "text-gray-600 hover:bg-purple-50/50 hover:text-purple-600"
-//           }`}
-//         >
-//           <FiSettings className="w-5 h-5" />
-//           Settings
-//         </Link>
-//         <button
-//           onClick={navigation.bind(null, "/login")}
-//           className="flex items-center gap-3 p-3 rounded-lg text-purple-900 hover:bg-purple-50 transition-colors w-full cursor-pointer"
-//         >
-//           <FiLogOut className="text-purple-600" />
-//           <span>Sign Out</span>
-//         </button>
-//       </div>
-
-//       {/* Account Section */}
-//       <button className="cursor-pointer" onClick={() => navigation("/profile")}>
-//         <div className="mt-auto border-t border-purple-100">
-//           <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer">
-//             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center justify-center text-white text-sm">
-//               JD
-//             </div>
-//             <div className="flex flex-col items-start">
-//               <p className="text-sm font-medium text-purple-900">John Doe</p>
-//               <p className="text-xs text-purple-400">john@example.com</p>
-//             </div>
-//           </div>
-//         </div>
-//       </button>
-//     </aside>
-//   );
-// };
-
-// export default Sidebar;
-
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -200,12 +11,17 @@ import {
   Sparkles,
   Clock,
   Calendar,
+  Trash2,
+  Edit,
+  X,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AddListModal from "./AddList";
 import AddTagModal from "./AddTag";
 import { useEffect } from "react";
 import { getMe } from "../services/auth";
+import { getTags, deleteTag } from "../services/tags";
+import { getLists, addList, deleteList, updateList } from "../services/lists";
 
 // Animation variants
 const containerVariants = {
@@ -250,6 +66,8 @@ const Sidebar = () => {
     username: "",
     email: "",
   });
+  const [tags, setTags] = useState([]);
+  const [editingList, setEditingList] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -263,15 +81,59 @@ const Sidebar = () => {
     };
     fetchUserData();
   }, []);
+  const handleAddList = async (listData) => {
+    try {
+      // If editing an existing list
+      if (listData._id) {
+        const updatedList = await updateList(listData._id, listData);
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list._id === listData._id ? updatedList : list
+          )
+        );
+      } else {
+        // Creating a new list
+        console.log("Adding list:", listData);
+        const newList = await addList(listData);
+        setLists((prevLists) => [...prevLists, newList]);
+      }
 
-  const handleAddList = (listData) => {
-    console.log("Adding list:", listData);
-    // Call your API here
+      setShowListModal(false);
+      setEditingList(null);
+    } catch (error) {
+      console.error("Error adding/updating list:", error);
+    }
+  };
+  const handleDeleteList = async (id, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await deleteList(id);
+      setLists((prevLists) => prevLists.filter((list) => list._id !== id));
+    } catch (error) {
+      console.error("Error deleting list:", error);
+    }
+  };
+  const handleEditList = (list, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setEditingList(list);
+    setShowListModal(true);
   };
 
   const handleAddTag = (tagData) => {
     console.log("Adding tag:", tagData);
-    // Call your API here
+    setTags((prevTags) => [...prevTags, tagData]);
+  };
+  const handleDeleteTag = async (id, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await deleteTag(id);
+      setTags((prevTags) => prevTags.filter((tag) => tag._id !== id));
+    } catch (error) {
+      console.error("Error deleting tag:", error);
+    }
   };
 
   const navItems = [
@@ -296,14 +158,44 @@ const Sidebar = () => {
       path: "/sticky-wall",
     },
   ];
+  const [lists, setLists] = useState([]);
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await getTags();
+        console.log("Fetched tags:", response);
+        setTags(response);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+        // Set default tags as fallback if API fails
+        setTags([
+          { _id: "default-1", name: "Work" },
+          { _id: "default-2", name: "Personal" },
+          { _id: "default-3", name: "Urgent" },
+        ]);
+      }
+    };
+    fetchTags();
+  }, []);
 
-  const lists = [
-    { name: "Personal", count: 7 },
-    { name: "Work", count: 8 },
-    { name: "Shopping", count: 0 },
-  ];
-
-  const tags = ["Urgent", "Important", "Later"];
+  useEffect(() => {
+    const fetchLists = async () => {
+      try {
+        const response = await getLists();
+        console.log("Fetched lists:", response);
+        setLists(response);
+      } catch (error) {
+        console.error("Error fetching lists:", error);
+        // Set default lists as fallback if API fails
+        setLists([
+          { _id: "default-1", name: "Personal", taskCount: 7 },
+          { _id: "default-2", name: "Work", taskCount: 8 },
+          { _id: "default-3", name: "Shopping", taskCount: 0 },
+        ]);
+      }
+    };
+    fetchLists();
+  }, []);
 
   return (
     <motion.aside
@@ -333,20 +225,18 @@ const Sidebar = () => {
           </button>
         </motion.div>
       </motion.div>
-
-      {/* modal component */}
+      {/* modal component */}{" "}
       <AddListModal
         isOpen={showListModal}
         onClose={() => setShowListModal(false)}
         onSubmit={handleAddList}
+        editingList={editingList}
       />
-
       <AddTagModal
         isOpen={showTagModal}
         onClose={() => setShowTagModal(false)}
         onSubmit={handleAddTag}
       />
-
       {/* Main Navigation */}
       <motion.nav
         className="flex-1 overflow-y-auto px-3 py-6 space-y-8"
@@ -395,31 +285,51 @@ const Sidebar = () => {
             </h3>
             <div className="h-px flex-1 bg-indigo-100 mx-2"></div>
             <motion.button
-              onClick={() => setShowListModal(true)}
+              onClick={() => {
+                setEditingList(null);
+                setShowListModal(true);
+              }}
               className="p-1 rounded-md text-indigo-600 hover:bg-indigo-50"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               <Plus className="w-4 h-4" />
             </motion.button>
-          </div>
+          </div>{" "}
           <ul className="space-y-1">
             {lists.map((list) => (
               <motion.li
-                key={list.name}
+                key={list._id}
                 whileHover={{ x: 3 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <a
                   href="#"
-                  className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all duration-200"
+                  className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all duration-200 group"
+                  style={{ borderLeft: `3px solid ${list.color || "#8B5CF6"}` }}
                 >
                   <span>{list.name}</span>
-                  {list.count > 0 && (
-                    <span className="text-xs bg-gradient-to-r from-blue-100 to-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">
-                      {list.count}
-                    </span>
-                  )}
+                  <div className="flex items-center">
+                    {list.taskCount > 0 && (
+                      <span className="text-xs bg-gradient-to-r from-blue-100 to-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full mr-2">
+                        {list.taskCount}
+                      </span>
+                    )}
+                    <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => handleEditList(list, e)}
+                        className="p-1 text-gray-500 hover:text-indigo-600"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={(e) => handleDeleteList(list._id, e)}
+                        className="p-1 text-gray-500 hover:text-red-600"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </a>
               </motion.li>
             ))}
@@ -428,7 +338,10 @@ const Sidebar = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <button
-                onClick={() => setShowListModal(true)}
+                onClick={() => {
+                  setEditingList(null);
+                  setShowListModal(true);
+                }}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-indigo-600 hover:bg-indigo-50/50 w-full transition-all duration-200"
               >
                 <Plus className="w-4 h-4" />
@@ -445,19 +358,25 @@ const Sidebar = () => {
               Tags
             </h3>
             <div className="h-px flex-1 bg-indigo-100 mx-2"></div>
-          </div>
+          </div>{" "}
           <div className="flex flex-wrap gap-2 px-4">
             {tags.map((tag) => (
               <motion.span
-                key={tag}
-                className="text-xs bg-gradient-to-r from-purple-50 to-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full flex items-center gap-1 border border-indigo-100"
+                key={tag._id}
+                className="text-xs bg-gradient-to-r from-purple-50 to-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full flex items-center gap-1 border border-indigo-100 group"
                 whileHover={{
                   scale: 1.05,
                   boxShadow: "0 2px 5px rgba(79, 70, 229, 0.1)",
                 }}
               >
                 <Tag className="w-3 h-3" />
-                {tag}
+                {tag.name}
+                <button
+                  onClick={(e) => handleDeleteTag(tag._id, e)}
+                  className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
+                >
+                  <X className="w-3 h-3" />
+                </button>
               </motion.span>
             ))}
           </div>
@@ -470,7 +389,6 @@ const Sidebar = () => {
           </button>
         </motion.div>
       </motion.nav>
-
       {/* Settings & Account */}
       <motion.div
         className="p-3 border-t border-indigo-100 space-y-1"

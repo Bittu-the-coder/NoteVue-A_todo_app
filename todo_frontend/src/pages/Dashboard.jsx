@@ -281,6 +281,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getMe } from "../services/auth";
+import AddTaskModal from "../components/AddTask";
+import AddNoteModal from "../components/AddNote";
 
 // Animation variants
 const containerVariants = {
@@ -351,6 +353,26 @@ const Dashboard = () => {
   });
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
+
+  const lists = [
+    { id: "1", name: "Personal", color: "#8B5CF6" },
+    { id: "2", name: "Work", color: "#3B82F6" },
+  ];
+
+  const tags = [
+    { id: "1", name: "Important" },
+    { id: "2", name: "Urgent" },
+  ];
+
+  const handleAddTask = (taskData) => {
+    console.log("Adding task:", taskData);
+    // Call your API here
+  };
+
+  const handleAddNote = (noteData) => {
+    console.log("Adding note:", noteData);
+    // Call your API here
+  };
 
   // Sample tasks data
   const tasks = [
@@ -462,6 +484,21 @@ const Dashboard = () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-pink-50 overflow-hidden">
       <BackgroundElements />
+
+      {/* Modal components */}
+      <AddTaskModal
+        isOpen={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        onSubmit={handleAddTask}
+        lists={lists}
+        tags={tags}
+      />
+
+      <AddNoteModal
+        isOpen={showNoteModal}
+        onClose={() => setShowNoteModal(false)}
+        onSubmit={handleAddNote}
+      />
 
       <motion.div
         className="container mx-auto px-4 py-8 space-y-6 relative z-10"
