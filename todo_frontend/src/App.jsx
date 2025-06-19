@@ -10,66 +10,85 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import TodayTasks from "./pages/Today";
 import UpcomingTasks from "./pages/Upcoming";
-import Tiptap from "./components/Tiptap";
-import { EditorProvider } from "@tiptap/react";
+import AllTasks from "./pages/AllTasks";
+import Completed from "./pages/Completed";
+import { TaskProvider } from "./contexts/TaskContext";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Onboarding />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/dashboard"
-          element={
-            <DashboardLayout>
-              <Dashboard />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/upcoming"
-          element={
-            <DashboardLayout>
-              <UpcomingTasks />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/today"
-          element={
-            <DashboardLayout>
-              <TodayTasks />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/sticky-wall"
-          element={
-            <DashboardLayout>
-              <StickyWall />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <DashboardLayout>
-              <Settings />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <DashboardLayout>
-              <Profile />
-            </DashboardLayout>
-          }
-        />
-      </Routes>
-    </Router>
+    <TaskProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Onboarding />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/upcoming"
+            element={
+              <DashboardLayout>
+                <UpcomingTasks />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/today"
+            element={
+              <DashboardLayout>
+                <TodayTasks />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/all-tasks"
+            element={
+              <DashboardLayout>
+                <AllTasks />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/completed"
+            element={
+              <DashboardLayout>
+                <Completed />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/sticky-wall"
+            element={
+              <DashboardLayout>
+                <StickyWall />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            }
+          />
+        </Routes>
+      </Router>
+    </TaskProvider>
   );
 };
 

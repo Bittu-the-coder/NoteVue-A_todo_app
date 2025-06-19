@@ -1,6 +1,7 @@
 import React from "react";
-import { CheckCircle, ChevronRight, RotateCcw } from "lucide-react";
+import { CheckCircle, CircleX, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTaskContext } from "../contexts/TaskContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -25,30 +26,35 @@ const itemVariants = {
 };
 
 const CompletedTasks = () => {
+  const { tasks, toggleTaskComplete, removeTask } = useTaskContext();
+
   // Sample data - replace with your actual completed tasks
-  const completedTasks = [
-    {
-      id: 1,
-      title: "Draft marketing email",
-      completedDate: "Today",
-      completedTime: "2 hours ago",
-      list: { name: "Work", color: "#3B82F6" },
-    },
-    {
-      id: 2,
-      title: "Buy groceries",
-      completedDate: "Yesterday",
-      completedTime: "at 5:30 PM",
-      list: { name: "Personal", color: "#8B5CF6" },
-    },
-    {
-      id: 3,
-      title: "Update portfolio website",
-      completedDate: "Jun 10",
-      completedTime: "at 2:15 PM",
-      list: { name: "Projects", color: "#EC4899" },
-    },
-  ];
+  const completedTasks = tasks
+    .filter((task) => task.completed)
+    .map((task) => ({
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      completedDate: task.completedAt,
+      completedTime: task.completedAt,
+      list: task.list,
+    }));
+
+  const reStartTask = async (taskId) => {
+    try {
+      await toggleTaskComplete(taskId);
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
+    }
+  };
+  const handleDeleteTask = async (taskId) => {
+    console.log("Deleting task with ID:", taskId);
+    try {
+      await removeTask(taskId);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
 
   return (
     <motion.div
@@ -96,6 +102,7 @@ const CompletedTasks = () => {
                   <h3 className="font-medium text-purple-900 line-through opacity-70">
                     {task.title}
                   </h3>
+                  <p className="text-sm text-gray-500">{task.description}</p>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-sm text-purple-500 flex items-center gap-1">
                       Completed {task.completedDate} {task.completedTime}
@@ -113,10 +120,16 @@ const CompletedTasks = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="w-8 h-8 rounded-full border border-purple-200 flex items-center justify-center text-purple-500 hover:bg-purple-100 transition-colors">
+                  <button
+                    onClick={() => reStartTask(task.id)}
+                    className="w-8 h-8 rounded-full border border-purple-200 flex items-center justify-center text-purple-500 hover:bg-purple-100 transition-colors"
+                  >
                     <RotateCcw size={14} />
                   </button>
-                  <ChevronRight className="text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CircleX
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="w-8 h-8 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
                 </div>
               </motion.div>
             ))}

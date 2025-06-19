@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Calendar, Plus, Check, Flag, ChevronRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Calendar, Plus, Check, Flag, CircleX } from "lucide-react";
 import { motion } from "framer-motion";
 import AddTaskModal from "../components/AddTask";
+import { useTaskContext } from "../contexts/TaskContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -27,43 +28,15 @@ const itemVariants = {
 
 const UpcomingTasks = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const handleAddTask = (taskData) => {
-    console.log("Adding task:", taskData);
-    // Call your API here
-  };
-  // Sample data - replace with your actual data
-  const lists = [
-    { id: "1", name: "Personal", color: "#8B5CF6" },
-    { id: "2", name: "Work", color: "#3B82F6" },
-  ];
+  const { getUpcomingTasks, removeTask } = useTaskContext();
+  const [upcomingTasks, setUpcomingTask] = useState([]);
 
-  const tags = [
-    { id: "1", name: "Important" },
-    { id: "2", name: "Urgent" },
-  ];
-  const upcomingTasks = [
-    {
-      id: 1,
-      title: "Client presentation",
-      date: "Tomorrow",
-      time: "10:00 AM",
-      priority: "high",
-    },
-    {
-      id: 2,
-      title: "Submit monthly report",
-      date: "Jun 15",
-      time: "3:00 PM",
-      priority: "medium",
-    },
-    {
-      id: 3,
-      title: "Team building activity",
-      date: "Jun 20",
-      time: "All day",
-      priority: "low",
-    },
-  ];
+  useEffect(() => {
+    const tasks = getUpcomingTasks();
+    setUpcomingTask(tasks);
+  }, [getUpcomingTasks]);
+
+  console.log("upcoming-------------", upcomingTasks);
 
   return (
     <motion.div
@@ -76,9 +49,6 @@ const UpcomingTasks = () => {
       <AddTaskModal
         isOpen={showTaskModal}
         onClose={() => setShowTaskModal(false)}
-        onSubmit={handleAddTask}
-        lists={lists}
-        tags={tags}
       />
 
       <motion.div
@@ -128,6 +98,7 @@ const UpcomingTasks = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-medium text-blue-900">{task.title}</h3>
+                  <p className="text-sm text-gray-500">{task.description}</p>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-sm text-blue-500 flex items-center gap-1">
                       {task.date} • {task.time}
@@ -149,7 +120,10 @@ const UpcomingTasks = () => {
                     )}
                   </div>
                 </div>
-                <ChevronRight className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <CircleX
+                  onClick={() => removeTask(task._id)}
+                  className="text-red-600 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                />
               </motion.div>
             ))}
           </motion.div>

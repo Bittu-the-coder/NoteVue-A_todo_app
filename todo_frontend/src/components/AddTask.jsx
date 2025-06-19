@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Calendar, Flag, List, Tag, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTaskContext } from "../contexts/TaskContext";
+import { getLists } from "../services/lists";
+import { getTags } from "../services/tags";
 
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.9 },
@@ -30,27 +33,84 @@ const overlayVariants = {
   exit: { opacity: 0 },
 };
 
-const AddTaskModal = ({
-  isOpen,
-  onClose,
-  lists,
-  tags,
-  onSubmit,
-  className,
-}) => {
+const AddTaskModal = ({ isOpen, onClose, className }) => {
+  const [lists, setLists] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [loadingLists, setLoadingLists] = useState(true);
+  const [loadingTags, setLoadingTags] = useState(true);
   const [taskData, setTaskData] = useState({
     title: "",
+    description: "",
+    completed: false,
     dueDate: null,
     priority: "medium",
-    listId: lists[0]?.id || "",
+    listId: "",
     tagIds: [],
   });
+  const { createTask, resetNewTaskForm } = useTaskContext();
+
+  const getAllLists = async () => {
+    try {
+      setLoadingLists(true);
+      const response = await getLists();
+      setLists(response);
+      setLoadingLists(false);
+      return response;
+    } catch (error) {
+      console.error("Error fetching lists:", error);
+      return [];
+    }
+  };
+
+  const getAllTags = async () => {
+    try {
+      setLoadingTags(true);
+      const response = await getTags();
+      setTags(response);
+      setLoadingTags(false);
+      return response;
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      return [];
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(taskData);
+    if (!taskData.title.trim()) {
+      alert("Task title is required");
+      return;
+    }
+    const newTask = {
+      title: taskData.title,
+      description: taskData.description || "",
+      completed: false,
+      dueDate: taskData.dueDate,
+      priority: taskData.priority,
+      list: taskData.listId,
+      tags: taskData.tagIds,
+    };
+    console.log("new task", newTask);
+
+    createTask(newTask);
+    resetNewTaskForm();
     onClose();
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedLists = await getAllLists();
+      await getAllTags();
+      if (fetchedLists.length > 0 && !taskData.listId) {
+        setTaskData((prev) => ({
+          ...prev,
+          listId: fetchedLists[0]._id,
+        }));
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (!isOpen) return null;
 
@@ -115,7 +175,6 @@ const AddTaskModal = ({
                     setTaskData({ ...taskData, description: e.target.value })
                   }
                   className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
-                  required
                 />
               </div>
 
@@ -158,14 +217,14 @@ const AddTaskModal = ({
                 </label>
                 <select
                   value={taskData.listId}
-                  onChange={(e) =>
-                    setTaskData({ ...taskData, listId: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setTaskData({ ...taskData, listId: e.target.value });
+                  }}
                   className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                   required
                 >
                   {lists.map((list) => (
-                    <option key={list.id} value={list.id}>
+                    <option key={list._id} value={list._id}>
                       {list.name}
                     </option>
                   ))}
@@ -182,13 +241,13 @@ const AddTaskModal = ({
                       type="button"
                       key={tag.id}
                       onClick={() => {
-                        const updatedTags = taskData.tagIds.includes(tag.id)
-                          ? taskData.tagIds.filter((id) => id !== tag.id)
-                          : [...taskData.tagIds, tag.id];
+                        const updatedTags = taskData.tagIds.includes(tag._id)
+                          ? taskData.tagIds.filter((id) => id !== tag._id)
+                          : [...taskData.tagIds, tag._id];
                         setTaskData({ ...taskData, tagIds: updatedTags });
                       }}
                       className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${
-                        taskData.tagIds.includes(tag.id)
+                        taskData.tagIds.includes(tag._id)
                           ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ListTodo,
   Plus,
@@ -6,10 +6,11 @@ import {
   Flag,
   Calendar,
   CheckCircle,
-  ChevronRight,
+  CircleX,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AddTaskModal from "../components/AddTask";
+import { useTaskContext } from "../contexts/TaskContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,77 +37,57 @@ const itemVariants = {
 const AllTasks = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [filter, setFilter] = useState("all"); // "all", "active", "completed"
+  const { toggleTaskComplete, getAllTasks, removeTask } = useTaskContext();
+  const [tasks, setTasks] = useState([]);
 
-  const handleAddTask = (taskData) => {
-    console.log("Adding task:", taskData);
-    // Call your API here
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  const handleToggleComplete = async (taskId) => {
+    try {
+      await toggleTaskComplete(taskId);
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, completed: !task.completed } : task
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
+    }
   };
 
-  // Sample data - replace with your actual data
-  const lists = [
-    { id: "1", name: "Personal", color: "#8B5CF6" },
-    { id: "2", name: "Work", color: "#3B82F6" },
-  ];
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await removeTask(taskId);
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
 
-  const tags = [
-    { id: "1", name: "Important" },
-    { id: "2", name: "Urgent" },
-  ];
-
-  const allTasks = [
-    {
-      id: 1,
-      title: "Client presentation",
-      date: "Tomorrow",
-      time: "10:00 AM",
-      priority: "high",
-      list: { name: "Work", color: "#3B82F6" },
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Morning standup",
-      date: "Today",
-      time: "9:00 AM",
-      priority: "medium",
-      list: { name: "Work", color: "#3B82F6" },
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Buy groceries",
-      date: "Yesterday",
-      time: "5:30 PM",
-      priority: "low",
-      list: { name: "Personal", color: "#8B5CF6" },
-      completed: true,
-    },
-    {
-      id: 4,
-      title: "Team building activity",
-      date: "Jun 20",
-      time: "All day",
-      priority: "low",
-      list: { name: "Work", color: "#3B82F6" },
-      completed: false,
-    },
-    {
-      id: 5,
-      title: "Update portfolio website",
-      date: "Jun 10",
-      time: "2:15 PM",
-      priority: "medium",
-      list: { name: "Projects", color: "#EC4899" },
-      completed: true,
-    },
-  ];
-
-  const filteredTasks = allTasks.filter((task) => {
+  const filteredTasks = tasks.filter((task) => {
     if (filter === "all") return true;
     if (filter === "active") return !task.completed;
     if (filter === "completed") return task.completed;
     return true;
   });
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
 
   return (
     <motion.div
@@ -119,9 +100,6 @@ const AllTasks = () => {
       <AddTaskModal
         isOpen={showTaskModal}
         onClose={() => setShowTaskModal(false)}
-        onSubmit={handleAddTask}
-        lists={lists}
-        tags={tags}
       />
 
       <motion.div
@@ -193,7 +171,7 @@ const AllTasks = () => {
           <motion.div className="space-y-4" variants={containerVariants}>
             {filteredTasks.map((task, index) => (
               <motion.div
-                key={task.id}
+                key={task._id}
                 className={`flex items-center gap-4 p-4 rounded-lg transition-colors group border border-transparent ${
                   task.completed
                     ? "hover:bg-purple-50 hover:border-purple-100"
@@ -226,6 +204,7 @@ const AllTasks = () => {
                   >
                     {task.title}
                   </h3>
+                  <p className="text-sm text-gray-500">{task.description}</p>
                   <div className="flex items-center gap-3 mt-1">
                     <span
                       className={`text-sm flex items-center gap-1 ${
@@ -233,20 +212,22 @@ const AllTasks = () => {
                       }`}
                     >
                       {task.completed
-                        ? `Completed on ${task.date}`
-                        : `${task.date} • ${task.time}`}
+                        ? `Completed on ${formatDate(task.completedAt)}`
+                        : `Due: ${formatDate(task.dueDate)}`}
                     </span>
 
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full border flex items-center gap-1"
-                      style={{
-                        backgroundColor: `${task.list.color}10`,
-                        borderColor: `${task.list.color}30`,
-                        color: task.list.color,
-                      }}
-                    >
-                      {task.list.name}
-                    </span>
+                    {task.list && (
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-full border flex items-center gap-1"
+                        style={{
+                          backgroundColor: `${task.list.color}10`,
+                          borderColor: `${task.list.color}30`,
+                          color: task.list.color,
+                        }}
+                      >
+                        {task.list.name}
+                      </span>
+                    )}
 
                     {!task.completed && task.priority === "high" && (
                       <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100 flex items-center gap-1">
@@ -267,15 +248,16 @@ const AllTasks = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   {!task.completed && (
-                    <button className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors">
+                    <button
+                      className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors"
+                      onClick={() => handleToggleComplete(task._id)}
+                    >
                       <Check size={16} />
                     </button>
                   )}
-                  <ChevronRight
-                    className={`opacity-0 group-hover:opacity-100 transition-opacity ${
-                      task.completed ? "text-purple-400" : "text-indigo-400"
-                    }`}
-                  />
+                  <button onClick={() => handleDeleteTask(task._id)}>
+                    <CircleX className="w-8 h-8 text-red-500 hover:text-red-600 transition-colors group-hover:opacity-100 opacity-0" />
+                  </button>
                 </div>
               </motion.div>
             ))}

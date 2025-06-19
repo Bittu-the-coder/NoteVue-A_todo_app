@@ -3,22 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
 exports.getTasks = asyncHandler(async (req, res, next) => {
-  // Filtering
-  let query;
-  let queryStr = JSON.stringify({ ...req.query, user: req.user.id });
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-
-  query = Task.find(JSON.parse(queryStr)).populate('list tags');
-
-  // Sorting
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort('-createdAt');
-  }
-
-  const tasks = await query;
+  const tasks = await Task.find({ user: req.user.id }).populate('list tags');
 
   res.status(200).json({
     success: true,
@@ -107,7 +92,7 @@ exports.deleteTask = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await task.remove();
+  await task.deleteOne();
 
   res.status(200).json({
     success: true,

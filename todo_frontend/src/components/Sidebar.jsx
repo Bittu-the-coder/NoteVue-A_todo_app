@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Layout,
-  CheckSquare,
   FileText,
   Settings,
   Plus,
@@ -11,9 +10,10 @@ import {
   Sparkles,
   Clock,
   Calendar,
-  Trash2,
   Edit,
   X,
+  CircleCheckBig,
+  CalendarCheck2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AddListModal from "./AddList";
@@ -143,6 +143,11 @@ const Sidebar = () => {
       path: "/dashboard",
     },
     {
+      icon: <CalendarCheck2 className="w-5 h-5" />,
+      label: "AllTasks",
+      path: "/all-tasks",
+    },
+    {
       icon: <Calendar className="w-5 h-5" />,
       label: "Upcoming",
       path: "/upcoming",
@@ -152,6 +157,12 @@ const Sidebar = () => {
       label: "Today",
       path: "/today",
     },
+    {
+      icon: <CircleCheckBig className="w-5 h-5" />,
+      label: "Completed",
+      path: "/completed",
+    },
+
     {
       icon: <FileText className="w-5 h-5" />,
       label: "Sticky Wall",

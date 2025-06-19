@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiPlus, FiX, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { motion } from "framer-motion";
+import AddNoteModal from "../components/AddNote";
 
 // Animation variants
 const containerVariants = {
@@ -36,31 +37,36 @@ const StickyWall = () => {
     { id: 3, content: "Personal goals for this month", color: "bg-green-100" },
   ]);
   const [newNote, setNewNote] = useState("");
-  const [showAddNote, setShowAddNote] = useState(false);
+  const [showNoteModal, setShowNoteModal] = useState(false);
 
-  const addNote = () => {
-    if (newNote.trim()) {
-      const colors = [
-        "bg-gradient-to-br from-yellow-50 to-yellow-100",
-        "bg-gradient-to-br from-blue-50 to-blue-100",
-        "bg-gradient-to-br from-pink-50 to-pink-100",
-        "bg-gradient-to-br from-green-50 to-green-100",
-        "bg-gradient-to-br from-purple-50 to-purple-100",
-      ];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-      setNotes([
-        ...notes,
-        {
-          id: Date.now(),
-          content: newNote,
-          color: randomColor,
-        },
-      ]);
-      setNewNote("");
-      setShowAddNote(false);
-    }
+  const handleAddNote = (noteData) => {
+    console.log("Adding note:", noteData);
+    // Call your API here
   };
+
+  // const addNote = () => {
+  //   if (newNote.trim()) {
+  //     const colors = [
+  //       "bg-gradient-to-br from-yellow-50 to-yellow-100",
+  //       "bg-gradient-to-br from-blue-50 to-blue-100",
+  //       "bg-gradient-to-br from-pink-50 to-pink-100",
+  //       "bg-gradient-to-br from-green-50 to-green-100",
+  //       "bg-gradient-to-br from-purple-50 to-purple-100",
+  //     ];
+  //     const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+  //     setNotes([
+  //       ...notes,
+  //       {
+  //         id: Date.now(),
+  //         content: newNote,
+  //         color: randomColor,
+  //       },
+  //     ]);
+  //     setNewNote("");
+  //     setShowAddNote(false);
+  //   }
+  // };
 
   const deleteNote = (id) => {
     setNotes(notes.filter((note) => note.id !== id));
@@ -73,6 +79,11 @@ const StickyWall = () => {
       animate="visible"
       variants={containerVariants}
     >
+      <AddNoteModal
+        isOpen={showNoteModal}
+        onClose={() => setShowNoteModal(false)}
+        onSubmit={handleAddNote}
+      />
       <motion.div variants={itemVariants} className="relative">
         <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
           Sticky Wall
@@ -91,59 +102,22 @@ const StickyWall = () => {
         <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-purple-400 rounded-bl-lg" />
         <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-purple-400 rounded-br-lg" />
 
-        {!showAddNote ? (
-          <motion.div
-            className="flex justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <motion.div
+          className="flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.button
+            onClick={() => setShowNoteModal(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white px-5 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <motion.button
-              onClick={() => setShowAddNote(true)}
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white px-5 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FiPlus size={18} />
-              Create New Note
-            </motion.button>
-          </motion.div>
-        ) : (
-          <motion.div
-            className="space-y-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-          >
-            <h2 className="text-lg font-semibold text-purple-900">
-              Create New Note
-            </h2>
-            <textarea
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              placeholder="Write your note here..."
-              className="w-full h-32 bg-white border border-purple-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent resize-none"
-            />
-            <div className="flex justify-end gap-3">
-              <motion.button
-                onClick={() => setShowAddNote(false)}
-                className="px-4 py-2 border border-purple-200 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Cancel
-              </motion.button>
-              <motion.button
-                onClick={addNote}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Save Note
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
+            <FiPlus size={18} />
+            Create New Note
+          </motion.button>
+        </motion.div>
       </motion.div>
 
       {/* Sticky notes grid */}
