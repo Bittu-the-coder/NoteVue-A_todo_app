@@ -22,6 +22,7 @@ import { useEffect } from "react";
 import { getMe } from "../services/auth";
 import { getTags, deleteTag } from "../services/tags";
 import { getLists, addList, deleteList, updateList } from "../services/lists";
+import { useTheme } from "../contexts/ThemeContext";
 
 // Animation variants
 const containerVariants = {
@@ -69,6 +70,8 @@ const Sidebar = () => {
   const [lists, setLists] = useState([]);
   const [tags, setTags] = useState([]);
   const [editingList, setEditingList] = useState(null);
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -126,9 +129,7 @@ const Sidebar = () => {
     // console.log("Adding tag:", tagData);
     setTags((prevTags) => [...prevTags, tagData]);
   };
-  const handleDeleteTag = async (id, e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDeleteTag = async (id) => {
     try {
       await deleteTag(id);
       setTags((prevTags) => prevTags.filter((tag) => tag._id !== id));
@@ -163,7 +164,6 @@ const Sidebar = () => {
       label: "Completed",
       path: "/completed",
     },
-
     {
       icon: <FileText className="w-5 h-5" />,
       label: "Sticky Wall",
@@ -209,14 +209,24 @@ const Sidebar = () => {
   }, []);
   return (
     <motion.aside
-      className="w-64 h-screen flex flex-col bg-white/80 backdrop-blur-lg border-r border-indigo-100 shadow-lg fixed md:sticky top-0"
+      style={{
+        scrollbarWidth: "thin",
+        scrollbarColor: "transparent transparent",
+      }}
+      className={`w-64 h-screen flex flex-col ${
+        isDarkMode
+          ? "bg-gray-800/90 backdrop-blur-lg border-r border-gray-700"
+          : "bg-white/80 backdrop-blur-lg border-r border-indigo-100"
+      } shadow-lg fixed md:sticky top-0`}
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Logo and Hamburger */}
       <motion.div
-        className="p-4 md:p-6 border-b border-indigo-100"
+        className={`p-4 md:p-6 border-b ${
+          isDarkMode ? "border-gray-700" : "border-indigo-100"
+        }`}
         variants={itemVariants}
       >
         <motion.div
@@ -225,26 +235,25 @@ const Sidebar = () => {
           className="flex items-center justify-between"
         >
           <div>
-            <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h2
+              className={`text-xl md:text-2xl font-bold bg-gradient-to-r ${
+                isDarkMode
+                  ? "from-blue-400 to-purple-400"
+                  : "from-blue-600 to-purple-600"
+              } bg-clip-text text-transparent`}
+            >
               NoteVue
             </h2>
-            <p className="text-xs text-indigo-400/80">Productivity Suite</p>
+            <p
+              className={`text-xs ${
+                isDarkMode ? "text-indigo-400/60" : "text-indigo-400/80"
+              }`}
+            >
+              Productivity Suite
+            </p>
           </div>
         </motion.div>
       </motion.div>
-
-      {/* Modal components */}
-      <AddListModal
-        isOpen={showListModal}
-        onClose={() => setShowListModal(false)}
-        onSubmit={handleAddList}
-        editingList={editingList}
-      />
-      <AddTagModal
-        isOpen={showTagModal}
-        onClose={() => setShowTagModal(false)}
-        onSubmit={handleAddTag}
-      />
 
       {/* Main Navigation */}
       <motion.nav
@@ -263,14 +272,26 @@ const Sidebar = () => {
                   to={item.path}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     pathname === item.path
-                      ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm"
-                      : "text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600"
+                      ? `${
+                          isDarkMode
+                            ? "bg-gradient-to-r from-blue-900/50 to-indigo-900/50 text-blue-300 border border-blue-800"
+                            : "bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-700 border border-indigo-100"
+                        } shadow-sm`
+                      : `${
+                          isDarkMode
+                            ? "text-gray-300 hover:bg-gray-700/50 hover:text-blue-300"
+                            : "text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600"
+                        }`
                   }`}
                 >
                   <span
                     className={
                       pathname === item.path
-                        ? "text-indigo-600"
+                        ? isDarkMode
+                          ? "text-blue-400"
+                          : "text-indigo-600"
+                        : isDarkMode
+                        ? "text-gray-400"
                         : "text-gray-500"
                     }
                   >
@@ -278,38 +299,55 @@ const Sidebar = () => {
                   </span>
                   <span className="truncate">{item.label}</span>
                   {pathname === item.path && (
-                    <div className="ml-auto w-1.5 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full" />
+                    <div
+                      className={`ml-auto w-1.5 h-8 bg-gradient-to-b ${
+                        isDarkMode
+                          ? "from-blue-500 to-purple-500"
+                          : "from-blue-600 to-purple-600"
+                      } rounded-full`}
+                    />
                   )}
                 </Link>
               </motion.li>
             ))}
           </ul>
         </motion.div>
-
         {/* Lists Section */}
         <motion.div variants={itemVariants} className="space-y-2">
           <div className="flex items-center justify-between px-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <h3
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
               Lists
             </h3>
-            <div className="h-px flex-1 bg-indigo-100 mx-2"></div>
+            <div
+              className={`h-px flex-1 ${
+                isDarkMode ? "bg-gray-700" : "bg-indigo-100"
+              } mx-2`}
+            ></div>
             <motion.button
               onClick={() => {
                 setEditingList(null);
                 setShowListModal(true);
               }}
-              className="p-1 rounded-md text-indigo-600 hover:bg-indigo-50"
+              className={`p-1 rounded-md ${
+                isDarkMode
+                  ? "text-blue-400 hover:bg-gray-700"
+                  : "text-indigo-600 hover:bg-indigo-50"
+              }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               <Plus className="w-4 h-4" />
             </motion.button>
-          </div>{" "}
+          </div>
           <div className="space-y-1 max-h-[30vh] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent">
             {lists.map((list) => (
               <motion.div
                 key={list._id}
-                className="group"
+                className="group mx-2"
                 whileHover={{ x: 3 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
@@ -345,17 +383,28 @@ const Sidebar = () => {
             ))}
           </div>
         </motion.div>
-
         {/* Tags Section */}
         <motion.div variants={itemVariants} className="space-y-2">
           <div className="flex items-center justify-between px-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <h3
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
               Tags
             </h3>
-            <div className="h-px flex-1 bg-indigo-100 mx-2"></div>
+            <div
+              className={`h-px flex-1 ${
+                isDarkMode ? "bg-gray-700" : "bg-indigo-100"
+              } mx-2`}
+            ></div>
             <motion.button
               onClick={() => setShowTagModal(true)}
-              className="p-1 rounded-md text-indigo-600 hover:bg-indigo-50"
+              className={`p-1 rounded-md ${
+                isDarkMode
+                  ? "text-blue-400 hover:bg-gray-700"
+                  : "text-indigo-600 hover:bg-indigo-50"
+              }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -363,11 +412,19 @@ const Sidebar = () => {
             </motion.button>
           </div>
 
-          <div className="flex flex-wrap gap-2 px-4 max-h-[20vh] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent">
+          <div
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "transparent transparent",
+            }}
+            className="flex group flex-wrap gap-2 px-4 h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent"
+          >
             {tags.map((tag) => (
               <motion.span
                 key={tag._id}
-                className="group inline-flex items-center gap-1 bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg text-sm"
+                className={`group inline-flex items-center gap-1 text-indigo-600 px-2 py-1 rounded-lg text-sm ${
+                  isDarkMode ? "bg-gray-800" : "bg-indigo-50"
+                }`}
                 whileHover={{ scale: 1.05 }}
               >
                 <Tag className="w-3 h-3" />
@@ -382,64 +439,108 @@ const Sidebar = () => {
             ))}
           </div>
         </motion.div>
+        {/* Settings & Logout */}
+        <motion.div
+          className={`p-3 border-t ${
+            isDarkMode ? "border-gray-700" : "border-indigo-100"
+          } space-y-1 mt-auto`}
+          variants={containerVariants}
+        >
+          <motion.div variants={itemVariants}>
+            <Link
+              to="/settings"
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                pathname === "/settings"
+                  ? `${
+                      isDarkMode
+                        ? "bg-gradient-to-r from-blue-900/50 to-indigo-900/50 text-blue-300 border border-blue-800"
+                        : "bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-700 border border-indigo-100"
+                    } shadow-sm`
+                  : `${
+                      isDarkMode
+                        ? "text-gray-300 hover:bg-gray-700/50 hover:text-blue-300"
+                        : "text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600"
+                    }`
+              }`}
+            >
+              <Settings
+                className={`w-5 h-5 ${
+                  pathname === "/settings"
+                    ? isDarkMode
+                      ? "text-blue-400"
+                      : "text-indigo-600"
+                    : isDarkMode
+                    ? "text-gray-400"
+                    : "text-gray-500"
+                }`}
+              />
+              Settings
+            </Link>
+          </motion.div>
+
+          <motion.button
+            onClick={() => navigation("/login")}
+            className={`flex w-full items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium ${
+              isDarkMode
+                ? "text-red-400 hover:bg-red-900/50"
+                : "text-red-600 hover:bg-red-50/50"
+            } transition-all duration-200`}
+            variants={itemVariants}
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Sign Out</span>
+          </motion.button>
+
+          {/* Account Section */}
+          <motion.button
+            className="mt-3 w-full"
+            onClick={() => navigation("/profile")}
+            variants={itemVariants}
+            whileHover={{ y: -2 }}
+          >
+            <div
+              className={`flex items-center gap-3 p-3 rounded-xl ${
+                isDarkMode
+                  ? "hover:bg-gray-700/50 border border-transparent hover:border-gray-600"
+                  : "hover:bg-gradient-to-r from-blue-50 to-indigo-50 border border-transparent hover:border-indigo-100"
+              } transition-all duration-200`}
+            >
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm shadow-md">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col overflow-hidden text-left">
+                <p
+                  className={`text-sm font-medium ${
+                    isDarkMode ? "text-gray-200" : "text-indigo-900"
+                  } truncate w-full`}
+                >
+                  {userData.username}
+                </p>
+                <p
+                  className={`text-xs ${
+                    isDarkMode ? "text-gray-400" : "text-indigo-400"
+                  } truncate w-full`}
+                >
+                  {userData.email}
+                </p>
+              </div>
+            </div>
+          </motion.button>
+        </motion.div>
       </motion.nav>
 
-      {/* Settings & Account */}
-      <motion.div
-        className="p-3 border-t border-indigo-100 space-y-1 mt-auto"
-        variants={containerVariants}
-      >
-        <motion.div variants={itemVariants}>
-          <Link
-            to="/settings"
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-              pathname === "/settings"
-                ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm"
-                : "text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600"
-            }`}
-          >
-            <Settings
-              className={
-                pathname === "/settings"
-                  ? "w-5 h-5 text-indigo-600"
-                  : "w-5 h-5 text-gray-500"
-              }
-            />
-            Settings
-          </Link>
-        </motion.div>
-
-        <motion.button
-          onClick={() => navigation("/login")}
-          className="flex w-full items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50/50 transition-all duration-200"
-          variants={itemVariants}
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Sign Out</span>
-        </motion.button>
-
-        {/* Account Section */}
-        <motion.button
-          className="mt-3 w-full"
-          onClick={() => navigation("/profile")}
-          variants={itemVariants}
-          whileHover={{ y: -2 }}
-        >
-          <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r from-blue-50 to-indigo-50 border border-transparent hover:border-indigo-100 transition-all duration-200">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm shadow-md">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div className="flex flex-col items-start overflow-hidden">
-              <p className="text-sm font-medium text-indigo-900 truncate w-full">
-                {userData.username}
-              </p>
-              <p className="text-xs text-indigo-400 truncate w-full">
-                {userData.email}
-              </p>
-            </div>
-          </div>
-        </motion.button>
-      </motion.div>
+      {/* Modals */}
+      <AddListModal
+        isOpen={showListModal}
+        onClose={() => setShowListModal(false)}
+        onSubmit={handleAddList}
+        editingList={editingList}
+      />
+      <AddTagModal
+        isOpen={showTagModal}
+        onClose={() => setShowTagModal(false)}
+        onSubmit={handleAddTag}
+      />
     </motion.aside>
   );
 };

@@ -7,6 +7,7 @@ import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useNotesContext } from "../contexts/NoteContext";
 import { getTags } from "../services/tags";
+import { useTheme } from "../contexts/ThemeContext";
 
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.9 },
@@ -51,6 +52,8 @@ const AddNoteModal = ({
   note = null,
   onSuccess = () => {},
 }) => {
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   const [tags, setTags] = useState([]);
   const [noteData, setNoteData] = useState({
     content: "",
@@ -75,8 +78,9 @@ const AddNoteModal = ({
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm max-w-none text-black focus:outline-none w-full min-h-[120px]",
+        class: `prose prose-sm max-w-none ${
+          isDarkMode ? "text-gray-200" : "text-black"
+        } focus:outline-none w-full min-h-[120px]`,
       },
     },
   });
@@ -142,11 +146,13 @@ const AddNoteModal = ({
     <motion.button
       type="button"
       onClick={action}
-      className={`p-2 rounded hover:bg-gray-200 transition-colors ${
+      className={`p-2 rounded ${
         isActive
           ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-          : "text-gray-700"
-      }`}
+          : isDarkMode
+          ? "text-gray-300 hover:bg-gray-700"
+          : "text-gray-700 hover:bg-gray-200"
+      } transition-colors`}
       title={tooltip}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -162,7 +168,9 @@ const AddNoteModal = ({
       {isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className={`fixed inset-0 ${
+              isDarkMode ? "bg-gray-950/75" : "bg-black/50"
+            } backdrop-blur-sm`}
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -171,19 +179,29 @@ const AddNoteModal = ({
           />
 
           <motion.div
-            className={`${className} bg-white rounded-xl w-full max-w-md relative z-10`}
+            className={`${className} ${
+              isDarkMode ? "bg-gray-900" : "bg-white"
+            } rounded-xl w-full max-w-md relative z-10`}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            <div className="flex justify-between items-center p-4 border-b border-blue-100">
-              <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <div
+              className={`flex justify-between items-center p-4 border-b ${
+                isDarkMode ? "border-gray-700" : "border-blue-100"
+              }`}
+            >
+              <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
                 {isEditing ? "Edit Note" : "Add New Note"}
               </h3>
               <motion.button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors"
+                className={`${
+                  isDarkMode
+                    ? "text-gray-400 hover:text-gray-300 bg-gray-800 hover:bg-gray-700"
+                    : "text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200"
+                } rounded-full p-1.5 transition-colors`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -193,12 +211,28 @@ const AddNoteModal = ({
 
             <form onSubmit={handleSubmit} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  className={`block text-sm font-medium ${
+                    isDarkMode ? "text-gray-300" : "text-gray-700"
+                  } mb-2`}
+                >
                   Note Content
                 </label>
-                <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-300 focus-within:border-transparent bg-white shadow-sm">
+                <div
+                  className={`border ${
+                    isDarkMode
+                      ? "border-gray-700 bg-gray-800"
+                      : "border-gray-300 bg-white"
+                  } rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent shadow-sm`}
+                >
                   {/* Toolbar */}
-                  <div className="flex flex-wrap items-center p-2 border-b bg-gray-50 gap-1">
+                  <div
+                    className={`flex flex-wrap items-center p-2 border-b ${
+                      isDarkMode
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-gray-50 border-gray-200"
+                    } gap-1`}
+                  >
                     <div className="flex gap-1 mr-3 border-r pr-3">
                       {renderToolbarButton(
                         <span className="font-bold">B</span>,
@@ -224,15 +258,27 @@ const AddNoteModal = ({
                   {/* Editor Content */}
                   <EditorContent
                     editor={editor}
-                    className="p-3 bg-white text-black"
+                    className={`p-3 ${
+                      isDarkMode
+                        ? "bg-gray-800 text-gray-200"
+                        : "bg-white text-black"
+                    }`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                    <Palette className="w-4 h-4 text-blue-600" /> Color
+                  <label
+                    className={`flex items-center gap-2 text-sm font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-700"
+                    } mb-1`}
+                  >
+                    <Palette
+                      className={isDarkMode ? "text-blue-500" : "text-blue-600"}
+                      size={16}
+                    />{" "}
+                    Color
                   </label>
                   <div className="flex gap-2">
                     {COLORS.map((color) => (
@@ -244,7 +290,11 @@ const AddNoteModal = ({
                         }
                         className={`w-6 h-6 rounded-full ${color.value} ${
                           noteData.color === color.value
-                            ? "ring-2 ring-offset-1 ring-blue-600"
+                            ? `ring-2 ring-offset-1 ${
+                                isDarkMode
+                                  ? "ring-blue-500 ring-offset-gray-900"
+                                  : "ring-blue-600 ring-offset-white"
+                              }`
                             : ""
                         }`}
                         whileHover={{ scale: 1.1 }}
@@ -256,8 +306,16 @@ const AddNoteModal = ({
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                    <Tag className="w-4 h-4 text-blue-600" /> Tags
+                  <label
+                    className={`flex items-center gap-2 text-sm font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-700"
+                    } mb-1`}
+                  >
+                    <Tag
+                      className={isDarkMode ? "text-blue-500" : "text-blue-600"}
+                      size={16}
+                    />{" "}
+                    Tags
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
@@ -268,6 +326,8 @@ const AddNoteModal = ({
                         className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 ${
                           noteData.tags.includes(tag._id)
                             ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                            : isDarkMode
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                         }`}
                         whileHover={{ scale: 1.05 }}
@@ -284,7 +344,11 @@ const AddNoteModal = ({
                 <motion.button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className={`px-4 py-2 border ${
+                    isDarkMode
+                      ? "border-gray-700 text-gray-300 hover:bg-gray-800"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

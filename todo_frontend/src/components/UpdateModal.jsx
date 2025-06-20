@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { useTheme } from "../contexts/ThemeContext";
 
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.9 },
@@ -29,6 +30,8 @@ const overlayVariants = {
 };
 
 const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -65,7 +68,9 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
       {isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className={`fixed inset-0 ${
+              isDarkMode ? "bg-gray-950/75" : "bg-black/50"
+            } backdrop-blur-sm`}
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -74,19 +79,29 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
           />
 
           <motion.div
-            className="bg-white rounded-xl w-full max-w-md relative z-10"
+            className={`${
+              isDarkMode ? "bg-gray-900" : "bg-white"
+            } rounded-xl w-full max-w-md relative z-10`}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            <div className="flex justify-between items-center p-4 border-b border-blue-100">
-              <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <div
+              className={`flex justify-between items-center p-4 border-b ${
+                isDarkMode ? "border-gray-700" : "border-blue-100"
+              }`}
+            >
+              <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
                 Update {whatToUpdate}
               </h3>
               <motion.button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors"
+                className={`${
+                  isDarkMode
+                    ? "text-gray-400 hover:text-gray-300 bg-gray-800 hover:bg-gray-700"
+                    : "text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200"
+                } rounded-full p-1.5 transition-colors`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -97,7 +112,11 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
             <form onSubmit={handleSubmit} className="p-4 space-y-4">
               {whatToUpdate === "username" && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    className={`block text-sm font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-700"
+                    } mb-1`}
+                  >
                     Username
                   </label>
                   <input
@@ -106,14 +125,22 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
                     value={formData.username}
                     onChange={handleChange}
                     required
-                    className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                    className={`w-full border ${
+                      isDarkMode
+                        ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                        : "bg-white border-gray-300 text-black focus:ring-blue-300"
+                    } rounded-lg px-3 py-2 focus:ring-2 focus:border-transparent`}
                   />
                 </div>
               )}
 
               {whatToUpdate === "email" && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    className={`block text-sm font-medium ${
+                      isDarkMode ? "text-gray-300" : "text-gray-700"
+                    } mb-1`}
+                  >
                     Email
                   </label>
                   <input
@@ -122,7 +149,11 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                    className={`w-full border ${
+                      isDarkMode
+                        ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                        : "bg-white border-gray-300 text-black focus:ring-blue-300"
+                    } rounded-lg px-3 py-2 focus:ring-2 focus:border-transparent`}
                   />
                 </div>
               )}
@@ -130,7 +161,11 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
               {whatToUpdate === "password" && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      className={`block text-sm font-medium ${
+                        isDarkMode ? "text-gray-300" : "text-gray-700"
+                      } mb-1`}
+                    >
                       New Password
                     </label>
                     <input
@@ -139,11 +174,19 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
                       value={formData.password}
                       onChange={handleChange}
                       required
-                      className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                      className={`w-full border ${
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                          : "bg-white border-gray-300 text-black focus:ring-blue-300"
+                      } rounded-lg px-3 py-2 focus:ring-2 focus:border-transparent`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      className={`block text-sm font-medium ${
+                        isDarkMode ? "text-gray-300" : "text-gray-700"
+                      } mb-1`}
+                    >
                       Confirm Password
                     </label>
                     <input
@@ -152,7 +195,11 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       required
-                      className="w-full border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                      className={`w-full border ${
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                          : "bg-white border-gray-300 text-black focus:ring-blue-300"
+                      } rounded-lg px-3 py-2 focus:ring-2 focus:border-transparent`}
                     />
                   </div>
                 </>
@@ -162,7 +209,11 @@ const UpdateModal = ({ isOpen, onClose, onSubmit, whatToUpdate }) => {
                 <motion.button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className={`px-4 py-2 border ${
+                    isDarkMode
+                      ? "border-gray-700 text-gray-300 hover:bg-gray-800"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

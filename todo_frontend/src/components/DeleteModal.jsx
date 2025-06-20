@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertTriangle } from "lucide-react";
+import { useTheme } from "../contexts/ThemeContext";
 
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.9 },
@@ -29,6 +30,8 @@ const overlayVariants = {
 };
 
 const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   if (!isOpen) return null;
 
   return (
@@ -36,7 +39,9 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
       {isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className={`fixed inset-0 ${
+              isDarkMode ? "bg-gray-950/75" : "bg-black/50"
+            } backdrop-blur-sm`}
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -45,20 +50,34 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
           />
 
           <motion.div
-            className="bg-white rounded-xl w-full max-w-md relative z-10"
+            className={`${
+              isDarkMode ? "bg-gray-900" : "bg-white"
+            } rounded-xl w-full max-w-md relative z-10`}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            <div className="flex justify-between items-center p-4 border-b border-red-100">
-              <h3 className="text-lg font-semibold text-red-600 flex items-center gap-2">
+            <div
+              className={`flex justify-between items-center p-4 border-b ${
+                isDarkMode ? "border-red-900" : "border-red-100"
+              }`}
+            >
+              <h3
+                className={`text-lg font-semibold ${
+                  isDarkMode ? "text-red-500" : "text-red-600"
+                } flex items-center gap-2`}
+              >
                 <AlertTriangle className="w-5 h-5" />
                 Delete Account
               </h3>
               <motion.button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors"
+                className={`${
+                  isDarkMode
+                    ? "text-gray-400 hover:text-gray-300 bg-gray-800 hover:bg-gray-700"
+                    : "text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200"
+                } rounded-full p-1.5 transition-colors`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -67,9 +86,13 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
             </div>
 
             <div className="p-4 space-y-4">
-              <div className="text-gray-700">
+              <div className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
                 <p className="font-medium mb-2">Are you absolutely sure?</p>
-                <p className="text-sm text-gray-500">
+                <p
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
                   This action cannot be undone. This will permanently delete
                   your account and remove your data from our servers.
                 </p>
@@ -79,7 +102,11 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
                 <motion.button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className={`px-4 py-2 border ${
+                    isDarkMode
+                      ? "border-gray-700 text-gray-300 hover:bg-gray-800"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -87,7 +114,11 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
                 </motion.button>
                 <motion.button
                   onClick={onConfirm}
-                  className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                  className={`px-4 py-2 bg-gradient-to-r ${
+                    isDarkMode
+                      ? "from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
+                      : "from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+                  } text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

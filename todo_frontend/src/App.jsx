@@ -14,84 +14,87 @@ import AllTasks from "./pages/AllTasks";
 import Completed from "./pages/Completed";
 import { TaskProvider } from "./contexts/TaskContext";
 import { NotesProvider } from "./contexts/NoteContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const App = () => {
   return (
-    <TaskProvider>
-      <NotesProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Onboarding />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route
-              path="/dashboard"
-              element={
-                <DashboardLayout>
-                  <Dashboard />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/upcoming"
-              element={
-                <DashboardLayout>
-                  <UpcomingTasks />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/today"
-              element={
-                <DashboardLayout>
-                  <TodayTasks />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/all-tasks"
-              element={
-                <DashboardLayout>
-                  <AllTasks />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/completed"
-              element={
-                <DashboardLayout>
-                  <Completed />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/sticky-wall"
-              element={
-                <DashboardLayout>
-                  <StickyWall />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <DashboardLayout>
-                  <Settings />
-                </DashboardLayout>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <DashboardLayout>
-                  <Profile />
-                </DashboardLayout>
-              }
-            />
-          </Routes>
-        </Router>
-      </NotesProvider>
-    </TaskProvider>
+    <ThemeProvider>
+      <TaskProvider>
+        <NotesProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Onboarding />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <DashboardLayout>
+                    <Dashboard />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/upcoming"
+                element={
+                  <DashboardLayout>
+                    <UpcomingTasks />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/today"
+                element={
+                  <DashboardLayout>
+                    <TodayTasks />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/all-tasks"
+                element={
+                  <DashboardLayout>
+                    <AllTasks />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/completed"
+                element={
+                  <DashboardLayout>
+                    <Completed />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/sticky-wall"
+                element={
+                  <DashboardLayout>
+                    <StickyWall />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <DashboardLayout>
+                    <Settings />
+                  </DashboardLayout>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <DashboardLayout>
+                    <Profile />
+                  </DashboardLayout>
+                }
+              />
+            </Routes>
+          </Router>
+        </NotesProvider>
+      </TaskProvider>
+    </ThemeProvider>
   );
 };
 
