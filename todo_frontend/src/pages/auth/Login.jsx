@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../services/auth";
+import SEO from "../../components/SEO";
+import StructuredData from "../../components/StructuredData";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -104,115 +106,129 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 flex flex-col md:flex-row">
-      {/* Left side - Image (matches onboarding) */}
-      <div className="md:w-1/2 h-64 md:h-auto relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/30 z-10"></div>
-        <img
-          src="https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt="Person working on laptop"
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute bottom-8 left-8 z-20 text-white">
-          <h1 className="text-4xl font-bold mb-2">NoteVue</h1>
-          <p className="text-lg opacity-90">Your productivity companion</p>
+    <>
+      <SEO
+        title="Login"
+        description="Login to your NoteVue account to manage your tasks and notes."
+        keywords="login, sign in, user account, task management, notes app"
+        canonicalUrl="/login"
+      />
+      <StructuredData path="/login" />
+
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 flex flex-col md:flex-row">
+        {/* Left side - Image (matches onboarding) */}
+        <div className="md:w-1/2 h-64 md:h-auto relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/30 z-10"></div>
+          <img
+            src="https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt="Person working on laptop"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute bottom-8 left-8 z-20 text-white">
+            <h1 className="text-4xl font-bold mb-2">NoteVue</h1>
+            <p className="text-lg opacity-90">Your productivity companion</p>
+          </div>
         </div>
-      </div>
 
-      {/* Right side - Login Form */}
-      <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-        <div className="max-w-md mx-auto w-full">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-lg">
-            <div className="text-4xl mb-6">🔐</div>
-            <h2 className="text-3xl font-bold text-white mb-6">Welcome Back</h2>
+        {/* Right side - Login Form */}
+        <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+          <div className="max-w-md mx-auto w-full">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-lg">
+              <div className="text-4xl mb-6">🔐</div>
+              <h2 className="text-3xl font-bold text-white mb-6">
+                Welcome Back
+              </h2>
 
-            {errors.general && (
-              <div className="mb-4 p-3 bg-red-500/20 text-red-100 rounded-lg text-sm">
-                {errors.general}
-              </div>
-            )}
+              {errors.general && (
+                <div className="mb-4 p-3 bg-red-500/20 text-red-100 rounded-lg text-sm">
+                  {errors.general}
+                </div>
+              )}
 
-            <form onSubmit={handleLogin}>
-              <div className="mb-6">
-                <label
-                  htmlFor="email"
-                  className="block text-white/80 mb-2 text-sm font-medium"
+              <form onSubmit={handleLogin}>
+                <div className="mb-6">
+                  <label
+                    htmlFor="email"
+                    className="block text-white/80 mb-2 text-sm font-medium"
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    className={`w-full bg-white/10 border ${
+                      errors.email ? "border-red-400" : "border-white/20"
+                    } rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent`}
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-red-400">{errors.email}</p>
+                  )}
+                </div>
+
+                <div className="mb-8">
+                  <label
+                    htmlFor="password"
+                    className="block text-white/80 mb-2 text-sm font-medium"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className={`w-full bg-white/10 border ${
+                      errors.password ? "border-red-400" : "border-white/20"
+                    } rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent`}
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  {errors.password && (
+                    <p className="mt-1 text-xs text-red-400">
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full bg-white text-indigo-900 hover:bg-white/90 transition-colors py-3 px-6 rounded-lg font-semibold text-lg shadow-md mb-4 ${
+                    isLoading ? "opacity-80 cursor-not-allowed" : ""
+                  }`}
                 >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  className={`w-full bg-white/10 border ${
-                    errors.email ? "border-red-400" : "border-white/20"
-                  } rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent`}
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                {errors.email && (
-                  <p className="mt-1 text-xs text-red-400">{errors.email}</p>
-                )}
+                  {isLoading ? "Logging in..." : "Login"}
+                </button>
+
+                <div className="text-center">
+                  <Link
+                    to="/forgot-password"
+                    className="text-white/70 hover:text-white text-sm transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              </form>
+
+              <div className="mt-8 pt-6 border-t border-white/20 text-center">
+                <p className="text-white/70 text-sm">
+                  Don't have an account?{" "}
+                  <Link to="/signup" className="text-white hover:underline">
+                    Sign up
+                  </Link>
+                </p>
               </div>
-
-              <div className="mb-8">
-                <label
-                  htmlFor="password"
-                  className="block text-white/80 mb-2 text-sm font-medium"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  className={`w-full bg-white/10 border ${
-                    errors.password ? "border-red-400" : "border-white/20"
-                  } rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent`}
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                {errors.password && (
-                  <p className="mt-1 text-xs text-red-400">{errors.password}</p>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full bg-white text-indigo-900 hover:bg-white/90 transition-colors py-3 px-6 rounded-lg font-semibold text-lg shadow-md mb-4 ${
-                  isLoading ? "opacity-80 cursor-not-allowed" : ""
-                }`}
-              >
-                {isLoading ? "Logging in..." : "Login"}
-              </button>
-
-              <div className="text-center">
-                <Link
-                  to="/forgot-password"
-                  className="text-white/70 hover:text-white text-sm transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </form>
-
-            <div className="mt-8 pt-6 border-t border-white/20 text-center">
-              <p className="text-white/70 text-sm">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-white hover:underline">
-                  Sign up
-                </Link>
-              </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

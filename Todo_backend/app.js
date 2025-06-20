@@ -10,6 +10,7 @@ const listRoutes = require('./routes/lists.routes');
 const tagRoutes = require('./routes/tags.routes');
 const taskRoutes = require('./routes/tasks.routes');
 const noteRoutes = require('./routes/notes.routes');
+const seoRoutes = require('./routes/seo.routes'); // Add SEO routes
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.get('/', (req, res) => {
     <html>
       <head>
         <title>Notes API</title>
+        <meta name="description" content="NoteVue API - A powerful todo and note-taking application API">
+        <meta name="robots" content="index, follow">
         <style>
           body {
             font-family: Arial, sans-serif;
@@ -26,8 +29,8 @@ app.get('/', (req, res) => {
         </style>
       </head>
       <body>
-        <h1>Notes API</h1>
-        <p>A simple API for creating, reading, updating and deleting notes.</p>
+        <h1>NoteVue API</h1>
+        <p>A simple API for creating, reading, updating and deleting notes and tasks.</p>
         <p>Checkout the API documentation at <a href="/api-docs">/api-docs</a></p>
       </body>
     </html>
@@ -47,7 +50,17 @@ const corsOptions = {
 
 // Middleware
 app.use(cors(corsOptions));
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc: ["'self'", 'data:', 'https://images.pexels.com']
+    }
+  }
+}));
 app.use(express.json());
 
 // Dev logging middleware
@@ -56,6 +69,7 @@ if ('development' === 'development') {
 }
 
 // Mount routers
+app.use('/', seoRoutes); // Add SEO routes at root level for robots.txt and sitemap.xml
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/lists', listRoutes);
 app.use('/api/v1/tags', tagRoutes);

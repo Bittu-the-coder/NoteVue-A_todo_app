@@ -5,6 +5,8 @@ import AddNoteModal from "../components/AddNote";
 import { useNotesContext } from "../contexts/NoteContext";
 import { useTheme } from "../contexts/ThemeContext";
 import DOMPurify from "dompurify";
+import SEO from "../components/SEO";
+import StructuredData from "../components/StructuredData";
 
 // Animation variants
 const containerVariants = {
@@ -89,6 +91,14 @@ const StickyWall = () => {
       animate="visible"
       variants={containerVariants}
     >
+      <SEO
+        title="Sticky Wall"
+        description="Organize your thoughts with sticky notes. Create, edit and manage your digital sticky notes in one place."
+        keywords="sticky notes, note taking, digital notes, reminders, memos, NoteVue"
+        canonicalUrl="/sticky-wall"
+      />
+      <StructuredData path="/sticky-wall" />
+
       <AddNoteModal
         isOpen={showNoteModal}
         onClose={handleCloseModal}

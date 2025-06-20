@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, ChevronLeft, Check, ExternalLink } from "lucide-react";
+import SEO from "../components/SEO"; // Import SEO component
+import StructuredData from "../components/StructuredData"; // Import StructuredData component
 
 const onboardingContent = [
   {
@@ -82,6 +84,14 @@ function Onboarding() {
       animate="visible"
       variants={stagger}
     >
+      <SEO
+        title="Welcome to NoteVue"
+        description="Organize your day, thoughts, and goals — all in one beautifully simple place. NoteVue is your productivity companion."
+        keywords="task management, note taking, productivity app, todo list, sticky notes, digital planner"
+        canonicalUrl="/"
+      />
+      <StructuredData path="/" />
+
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-60 md:w-80 h-60 md:h-80 bg-blue-400 opacity-10 rounded-full" />

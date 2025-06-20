@@ -11,6 +11,8 @@ import DOMPurify from "dompurify";
 import StatsMotivationCard from "../components/ProgressCard";
 import QuickNotesCard from "../components/QuickNotesCard";
 import TodayTasksCard from "../components/TodayTasksCard";
+import SEO from "../components/SEO";
+import StructuredData from "../components/StructuredData";
 
 // Animation variants
 const containerVariants = {
@@ -64,9 +66,27 @@ const Dashboard = () => {
   const [todaysTasks, setTodaysTasks] = useState([]);
   const { getTodayTasks } = useTaskContext();
   const { notes } = useNotesContext();
-  // console.log("Notes in Dashboard:", notes);
+  const [currentDate, setCurrentDate] = useState("");
+  const [quote, setQuote] = useState({
+    content: "Believe you can and you're halfway there.",
+    author: "Theodore Roosevelt",
+  });
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+
+  const recentNotes = notes;
 
   React.useEffect(() => {
+    // Format current date
+    const now = new Date();
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    setCurrentDate(now.toLocaleDateString("en-US", options));
+
     const fetchUserData = async () => {
       try {
         const response = await getMe();
@@ -83,14 +103,11 @@ const Dashboard = () => {
     fetchUserData();
   }, [getTodayTasks, notes]);
 
-  const [quote, setQuote] = useState({
-    content: "Believe you can and you're halfway there.",
-    author: "Theodore Roosevelt",
-  });
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showNoteModal, setShowNoteModal] = useState(false);
-
-  const recentNotes = notes;
+  // Use todaysTasks in a calculation to fix linting error
+  const completedTasksCount = todaysTasks.filter(
+    (task) => task.completed
+  ).length;
+  const totalTasksCount = todaysTasks.length;
 
   // Fetch quote (simulated)
   useEffect(() => {
@@ -177,13 +194,24 @@ const Dashboard = () => {
   const isDarkMode = theme === "dark";
 
   return (
-    <div
+    <main
       className={`relative min-h-screen ${
         isDarkMode
           ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
           : "bg-gradient-to-br from-blue-50 via-white to-pink-50"
       } overflow-hidden`}
+      aria-label="Dashboard Page"
     >
+      <SEO
+        title={
+          userData.username ? `${userData.username}'s Dashboard` : "Dashboard"
+        }
+        description="Manage your daily tasks, view your productivity stats, and access your recent notes all in one place."
+        keywords="dashboard, productivity, tasks, notes, todo app, NoteVue"
+        canonicalUrl="/dashboard"
+      />
+      <StructuredData path="/dashboard" userData={userData} />
+
       <BackgroundElements />
 
       {/* Modal components */}
@@ -204,7 +232,7 @@ const Dashboard = () => {
         variants={containerVariants}
       >
         {/* Welcome Header */}{" "}
-        <motion.div
+        <motion.header
           className={`${
             isDarkMode
               ? "bg-gray-800/90 backdrop-blur-lg border-gray-700 text-white"
@@ -229,6 +257,7 @@ const Dashboard = () => {
                 className={`w-4 h-4 ${
                   isDarkMode ? "text-blue-400" : "text-blue-600"
                 }`}
+                aria-hidden="true"
               />
               <span
                 className={`text-sm font-medium ${
@@ -258,7 +287,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
-                  Tuesday, April 22, 2025 • Let's be productive today!
+                  {currentDate} • Let's be productive today!
                 </motion.p>
                 <div
                   className={`absolute -left-4 top-0 w-1 h-full bg-gradient-to-b ${
@@ -266,6 +295,7 @@ const Dashboard = () => {
                       ? "from-blue-500 to-purple-500"
                       : "from-blue-600 to-purple-600"
                   } rounded-full`}
+                  aria-hidden="true"
                 />
               </div>
 
@@ -280,8 +310,9 @@ const Dashboard = () => {
                   className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white px-4 py-2 md:px-5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base w-full md:w-auto justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  aria-label="Add a new task"
                 >
-                  <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                  <Plus className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
                   Add New Task
                 </motion.button>{" "}
                 <motion.button
@@ -293,8 +324,12 @@ const Dashboard = () => {
                   } px-4 py-2 md:px-5 md:py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border text-sm md:text-base w-full md:w-auto justify-center`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  aria-label="Add a new note"
                 >
-                  <NotebookPen className="w-4 h-4 md:w-5 md:h-5" />
+                  <NotebookPen
+                    className="w-4 h-4 md:w-5 md:h-5"
+                    aria-hidden="true"
+                  />
                   New Note
                 </motion.button>
               </motion.div>
@@ -302,11 +337,17 @@ const Dashboard = () => {
           </div>
 
           {/* Decorative Elements */}
-          <div className="absolute -bottom-6 -right-6 w-24 md:w-32 h-24 md:h-32 bg-purple-200 rounded-full opacity-20" />
-          <div className="absolute top-10 right-20 w-12 md:w-16 h-12 md:h-16 bg-blue-200 rounded-full opacity-30 hidden md:block" />
-        </motion.div>
+          <div
+            className="absolute -bottom-6 -right-6 w-24 md:w-32 h-24 md:h-32 bg-purple-200 rounded-full opacity-20"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute top-10 right-20 w-12 md:w-16 h-12 md:h-16 bg-blue-200 rounded-full opacity-30 hidden md:block"
+            aria-hidden="true"
+          />
+        </motion.header>
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Tasks Section */}
           <TodayTasksCard />
 
@@ -319,7 +360,7 @@ const Dashboard = () => {
             onAddNote={() => setShowNoteModal(true)}
             showEmptyState={true}
           />
-        </div>
+        </section>
         {/* Bottom Action Buttons (Mobile) */}
         <div className="fixed bottom-6 right-6 flex gap-3 z-20 md:hidden">
           <motion.button
@@ -333,12 +374,13 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
+            aria-label="Add a new task (mobile)"
           >
-            <Plus size={22} />
+            <Plus size={22} aria-hidden="true" />
           </motion.button>
         </div>
       </motion.div>
-    </div>
+    </main>
   );
 };
 
