@@ -164,14 +164,14 @@ const Dashboard = () => {
       />
 
       <motion.div
-        className="container mx-auto px-4 py-8 space-y-6 relative z-10"
+        className="container mx-auto max-w-7xl px-4 py-6 md:py-8 space-y-6 relative z-10"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
         {/* Welcome Header */}
         <motion.div
-          className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 border border-blue-100 shadow-lg relative overflow-hidden"
+          className="bg-white/80 backdrop-blur-lg rounded-2xl p-4 md:p-6 border border-blue-100 shadow-lg relative overflow-hidden"
           variants={itemVariants}
           whileHover={{ scale: 1.01 }}
           transition={{ type: "spring", stiffness: 200 }}
@@ -181,7 +181,7 @@ const Dashboard = () => {
             <motion.div
               variants={floatingAnimation}
               animate="animate"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 rounded-full border border-blue-100 mb-6 shadow-sm"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 px-3 md:px-4 py-2 rounded-full border border-blue-100 mb-4 md:mb-6 shadow-sm"
             >
               <Sparkles className="w-4 h-4 text-blue-600" />
               <span className="text-sm font-medium text-blue-900">
@@ -189,10 +189,10 @@ const Dashboard = () => {
               </span>
             </motion.div>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
               <div className="relative">
                 <motion.h1
-                  className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+                  className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
@@ -214,25 +214,25 @@ const Dashboard = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
-                className="flex flex-wrap gap-4"
+                className="flex flex-wrap gap-3 md:gap-4"
               >
                 <motion.button
                   onClick={() => setShowTaskModal(true)}
-                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white px-4 py-2 md:px-5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base w-full md:w-auto justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-4 h-4 md:w-5 md:h-5" />
                   Add New Task
                 </motion.button>
 
                 <motion.button
                   onClick={() => setShowNoteModal(true)}
-                  className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 px-5 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200"
+                  className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 px-4 py-2 md:px-5 md:py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 text-sm md:text-base w-full md:w-auto justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <NotebookPen className="w-5 h-5" />
+                  <NotebookPen className="w-4 h-4 md:w-5 md:h-5" />
                   New Note
                 </motion.button>
               </motion.div>
@@ -240,12 +240,12 @@ const Dashboard = () => {
           </div>
 
           {/* Decorative Elements */}
-          <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-purple-200 rounded-full opacity-20" />
-          <div className="absolute top-10 right-20 w-16 h-16 bg-blue-200 rounded-full opacity-30" />
+          <div className="absolute -bottom-6 -right-6 w-24 md:w-32 h-24 md:h-32 bg-purple-200 rounded-full opacity-20" />
+          <div className="absolute top-10 right-20 w-12 md:w-16 h-12 md:h-16 bg-blue-200 rounded-full opacity-30 hidden md:block" />
         </motion.div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Tasks Section */}
           <TodayTasksCard />
 
@@ -261,21 +261,9 @@ const Dashboard = () => {
         </div>
 
         {/* Bottom Action Buttons (Mobile) */}
-        <div className="lg:hidden fixed bottom-6 right-6 flex gap-3 z-20">
+        <div className="fixed bottom-6 right-6 flex gap-3 z-20 md:hidden">
           <motion.button
-            className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full shadow-lg"
-            whileHover={{
-              scale: 1.1,
-              boxShadow: "0 0 15px rgba(59, 130, 246, 0.5)",
-            }}
-            whileTap={{ scale: 0.9 }}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-          >
-            <Edit size={20} />
-          </motion.button>
-          <motion.button
+            onClick={() => setShowTaskModal(true)}
             className="p-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full shadow-lg"
             whileHover={{
               scale: 1.1,
@@ -286,7 +274,7 @@ const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
           >
-            <Plus size={20} />
+            <Plus size={22} />
           </motion.button>
         </div>
       </motion.div>

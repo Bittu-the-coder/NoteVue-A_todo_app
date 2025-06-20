@@ -70,7 +70,7 @@ const StickyWall = () => {
 
   return (
     <motion.div
-      className="space-y-6 min-h-[85vh]"
+      className="space-y-4 md:space-y-6 min-h-[85vh] px-2 md:px-0"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -91,9 +91,8 @@ const StickyWall = () => {
         <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-purple-600 to-indigo-600 rounded-full" />
       </motion.div>
 
-      {/* Add new note button */}
       <motion.div
-        className="bg-white/80 backdrop-blur-lg rounded-xl p-6 border border-purple-100 shadow-lg relative overflow-hidden"
+        className="bg-white/80 backdrop-blur-lg rounded-xl p-4 md:p-6 border border-purple-100 shadow-lg relative overflow-hidden"
         variants={itemVariants}
       >
         {/* Decorative corner elements */}
@@ -105,7 +104,7 @@ const StickyWall = () => {
         <motion.div className="flex justify-center">
           <motion.button
             onClick={() => setShowNoteModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white px-5 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white px-4 py-2 md:px-5 md:py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-sm md:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -117,16 +116,16 @@ const StickyWall = () => {
 
       {/* Sticky notes grid */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         variants={containerVariants}
       >
         {notes.map((note) => (
           <motion.div
             key={note._id}
-            className={`${note.color} rounded-xl p-5 shadow-md relative min-h-[180px] flex flex-col border border-opacity-30 backdrop-blur-sm`}
+            className={`${note.color} rounded-xl p-4 md:p-5 shadow-md relative min-h-[180px] flex flex-col border border-opacity-30 backdrop-blur-sm`}
             variants={itemVariants}
             whileHover={{
-              scale: 1.03,
+              scale: 1.02,
               boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
             }}
             drag
@@ -142,26 +141,34 @@ const StickyWall = () => {
             />
 
             {/* Note footer with metadata and actions */}
-            <div className="mt-3 flex items-center justify-between">
-              <div className="flex gap-2 items-center flex-1">
-                <div className="flex items-center gap-1 text-xs text-gray-600">
+            <div className="mt-3 flex items-center justify-between flex-wrap gap-2">
+              <div className="flex gap-2 items-center flex-1 min-w-0">
+                <div className="flex items-center gap-1 text-xs text-gray-600 flex-shrink-0">
                   <FiClock size={12} />
                   {new Date(note.updatedAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
                   })}
                 </div>
+
                 {/* Tags display */}
                 {note.tags?.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {note.tags.map((tag) => (
-                      <span
-                        key={tag._id}
-                        className="px-2 py-0.5 text-xs bg-white/50 rounded-full text-indigo-600 border border-indigo-100"
-                      >
-                        {tag.name}
+                  <div className="flex flex-wrap gap-1 overflow-hidden">
+                    {note.tags
+                      .slice(0, window.innerWidth < 640 ? 1 : 2)
+                      .map((tag) => (
+                        <span
+                          key={tag._id}
+                          className="px-2 py-0.5 text-xs bg-white/50 rounded-full text-indigo-600 border border-indigo-100 whitespace-nowrap"
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    {note.tags.length > (window.innerWidth < 640 ? 1 : 2) && (
+                      <span className="px-2 py-0.5 text-xs bg-white/50 rounded-full text-indigo-600 border border-indigo-100">
+                        +{note.tags.length - (window.innerWidth < 640 ? 1 : 2)}
                       </span>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
@@ -194,24 +201,38 @@ const StickyWall = () => {
 
       {/* Empty state */}
       {notes.length === 0 && (
-        <motion.div className="text-center py-20" variants={itemVariants}>
+        <motion.div
+          className="text-center py-12 md:py-20"
+          variants={itemVariants}
+        >
           <motion.div
-            className="mx-auto w-24 h-24 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-full flex items-center justify-center text-purple-500 mb-4"
+            className="mx-auto w-20 h-20 md:w-24 md:h-24 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-full flex items-center justify-center text-purple-500 mb-4"
             whileHover={{ rotate: 5 }}
             whileTap={{ rotate: -5, scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            onClick={() => setShowNoteModal(true)}
           >
             <FiPlus size={36} />
           </motion.div>
-          <h3 className="text-xl font-medium text-purple-800 mb-2">
-            No notes yet
-          </h3>
-          <p className="text-purple-600">
+          <h3 className="text-lg font-medium text-purple-800">No notes yet</h3>
+          <p className="text-purple-500 mt-1">
             Create your first note to get started!
           </p>
         </motion.div>
       )}
+
+      {/* Mobile Add Button */}
+      <motion.button
+        className="fixed bottom-6 right-6 p-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full shadow-lg md:hidden z-20"
+        whileHover={{
+          scale: 1.1,
+          boxShadow: "0 0 15px rgba(139, 92, 246, 0.5)",
+        }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        onClick={() => setShowNoteModal(true)}
+      >
+        <FiPlus size={24} />
+      </motion.button>
     </motion.div>
   );
 };

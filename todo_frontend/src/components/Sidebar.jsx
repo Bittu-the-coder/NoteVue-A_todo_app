@@ -66,6 +66,7 @@ const Sidebar = () => {
     username: "",
     email: "",
   });
+  const [lists, setLists] = useState([]);
   const [tags, setTags] = useState([]);
   const [editingList, setEditingList] = useState(null);
 
@@ -169,7 +170,6 @@ const Sidebar = () => {
       path: "/sticky-wall",
     },
   ];
-  const [lists, setLists] = useState([]);
   useEffect(() => {
     const fetchTags = async () => {
       try {
@@ -207,17 +207,16 @@ const Sidebar = () => {
     };
     fetchLists();
   }, []);
-
   return (
     <motion.aside
-      className="w-64 h-full flex flex-col bg-white/80 backdrop-blur-lg border-r border-indigo-100 shadow-lg"
+      className="w-64 h-screen flex flex-col bg-white/80 backdrop-blur-lg border-r border-indigo-100 shadow-lg fixed md:sticky top-0"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Logo and Hamburger */}
       <motion.div
-        className="p-6 border-b border-indigo-100"
+        className="p-4 md:p-6 border-b border-indigo-100"
         variants={itemVariants}
       >
         <motion.div
@@ -226,17 +225,15 @@ const Sidebar = () => {
           className="flex items-center justify-between"
         >
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               NoteVue
             </h2>
             <p className="text-xs text-indigo-400/80">Productivity Suite</p>
           </div>
-          <button className="p-2 bg-indigo-50 rounded-lg text-indigo-500 hover:bg-indigo-100 transition-colors md:hidden">
-            <Layout className="w-5 h-5" />
-          </button>
         </motion.div>
       </motion.div>
-      {/* modal component */}{" "}
+
+      {/* Modal components */}
       <AddListModal
         isOpen={showListModal}
         onClose={() => setShowListModal(false)}
@@ -248,9 +245,10 @@ const Sidebar = () => {
         onClose={() => setShowTagModal(false)}
         onSubmit={handleAddTag}
       />
+
       {/* Main Navigation */}
       <motion.nav
-        className="flex-1 overflow-y-auto px-3 py-6 space-y-8"
+        className="flex-1 overflow-y-auto px-3 py-4 md:py-6 space-y-6 scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent"
         variants={containerVariants}
       >
         <motion.div variants={itemVariants}>
@@ -278,7 +276,7 @@ const Sidebar = () => {
                   >
                     {item.icon}
                   </span>
-                  {item.label}
+                  <span className="truncate">{item.label}</span>
                   {pathname === item.path && (
                     <div className="ml-auto w-1.5 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full" />
                   )}
@@ -289,8 +287,8 @@ const Sidebar = () => {
         </motion.div>
 
         {/* Lists Section */}
-        <motion.div variants={itemVariants}>
-          <div className="flex items-center justify-between px-4 mb-2">
+        <motion.div variants={itemVariants} className="space-y-2">
+          <div className="flex items-center justify-between px-4">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Lists
             </h3>
@@ -307,26 +305,27 @@ const Sidebar = () => {
               <Plus className="w-4 h-4" />
             </motion.button>
           </div>{" "}
-          <ul className="space-y-1">
+          <div className="space-y-1 max-h-[30vh] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent">
             {lists.map((list) => (
-              <motion.li
+              <motion.div
                 key={list._id}
+                className="group"
                 whileHover={{ x: 3 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <a
                   href="#"
-                  className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all duration-200 group"
+                  className="flex items-center justify-between gap-3 px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-indigo-50/50 hover:text-indigo-600 transition-all duration-200 group relative"
                   style={{ borderLeft: `3px solid ${list.color || "#8B5CF6"}` }}
                 >
-                  <span>{list.name}</span>
-                  <div className="flex items-center">
+                  <span className="truncate flex-1">{list.name}</span>
+                  <div className="flex items-center gap-1">
                     {list.taskCount > 0 && (
-                      <span className="text-xs bg-gradient-to-r from-blue-100 to-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full mr-2">
+                      <span className="text-xs bg-gradient-to-r from-blue-100 to-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full whitespace-nowrap">
                         {list.taskCount}
                       </span>
                     )}
-                    <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="hidden group-hover:flex md:flex-none items-center gap-1">
                       <button
                         onClick={(e) => handleEditList(list, e)}
                         className="p-1 text-gray-500 hover:text-indigo-600"
@@ -342,48 +341,39 @@ const Sidebar = () => {
                     </div>
                   </div>
                 </a>
-              </motion.li>
+              </motion.div>
             ))}
-            <motion.li
-              whileHover={{ x: 3 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <button
-                onClick={() => {
-                  setEditingList(null);
-                  setShowListModal(true);
-                }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-indigo-600 hover:bg-indigo-50/50 w-full transition-all duration-200"
-              >
-                <Plus className="w-4 h-4" />
-                Add new list
-              </button>
-            </motion.li>
-          </ul>
+          </div>
         </motion.div>
 
         {/* Tags Section */}
-        <motion.div variants={itemVariants}>
-          <div className="flex items-center px-4 mb-2">
+        <motion.div variants={itemVariants} className="space-y-2">
+          <div className="flex items-center justify-between px-4">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Tags
             </h3>
             <div className="h-px flex-1 bg-indigo-100 mx-2"></div>
-          </div>{" "}
-          <div className="flex flex-wrap gap-2 px-4">
+            <motion.button
+              onClick={() => setShowTagModal(true)}
+              className="p-1 rounded-md text-indigo-600 hover:bg-indigo-50"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Plus className="w-4 h-4" />
+            </motion.button>
+          </div>
+
+          <div className="flex flex-wrap gap-2 px-4 max-h-[20vh] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent">
             {tags.map((tag) => (
               <motion.span
                 key={tag._id}
-                className="text-xs bg-gradient-to-r from-purple-50 to-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full flex items-center gap-1 border border-indigo-100 group"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 2px 5px rgba(79, 70, 229, 0.1)",
-                }}
+                className="group inline-flex items-center gap-1 bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg text-sm"
+                whileHover={{ scale: 1.05 }}
               >
                 <Tag className="w-3 h-3" />
-                {tag.name}
+                <span className="truncate max-w-[100px]">{tag.name}</span>
                 <button
-                  onClick={(e) => handleDeleteTag(tag._id, e)}
+                  onClick={() => handleDeleteTag(tag._id)}
                   className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600"
                 >
                   <X className="w-3 h-3" />
@@ -391,18 +381,12 @@ const Sidebar = () => {
               </motion.span>
             ))}
           </div>
-          <button
-            onClick={() => setShowTagModal(true)}
-            className="flex items-center gap-3 mt-2 px-4 py-2.5 rounded-xl text-sm font-medium text-indigo-600 hover:bg-indigo-50/50 w-full transition-all duration-200"
-          >
-            <Plus className="w-4 h-4" />
-            Add new Tag
-          </button>
         </motion.div>
       </motion.nav>
+
       {/* Settings & Account */}
       <motion.div
-        className="p-3 border-t border-indigo-100 space-y-1"
+        className="p-3 border-t border-indigo-100 space-y-1 mt-auto"
         variants={containerVariants}
       >
         <motion.div variants={itemVariants}>
@@ -445,11 +429,13 @@ const Sidebar = () => {
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm shadow-md">
               <Sparkles className="w-4 h-4" />
             </div>
-            <div className="flex flex-col items-start">
-              <p className="text-sm font-medium text-indigo-900">
+            <div className="flex flex-col items-start overflow-hidden">
+              <p className="text-sm font-medium text-indigo-900 truncate w-full">
                 {userData.username}
               </p>
-              <p className="text-xs text-indigo-400">{userData.email}</p>
+              <p className="text-xs text-indigo-400 truncate w-full">
+                {userData.email}
+              </p>
             </div>
           </div>
         </motion.button>

@@ -9,17 +9,6 @@ const TodayTasksCard = () => {
   const todaysTasks = getTodayTasks();
 
   // Animation variants
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -30,21 +19,44 @@ const TodayTasksCard = () => {
     },
   };
 
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
+  };
+
   const handleToggleComplete = async (taskId) => {
     await toggleTaskComplete(taskId);
   };
 
   return (
     <motion.div
-      className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 border border-blue-100 shadow-lg lg:col-span-2 relative overflow-hidden"
+      className="bg-white/80 backdrop-blur-lg rounded-2xl p-4 md:p-6 border border-blue-100 shadow-lg lg:col-span-2 relative overflow-hidden"
       variants={itemVariants}
       whileHover={{ boxShadow: "0 8px 30px rgba(59, 130, 246, 0.15)" }}
     >
-      <div className="flex items-center gap-3 mb-6 relative z-10">
-        <div className="p-2 bg-blue-100 rounded-lg">
-          <CalendarClock className="w-6 h-6 text-blue-600" />
+      <div className="flex items-center justify-between gap-3 mb-4 md:mb-6 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <CalendarClock className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+          </div>
+          <h2 className="text-xl md:text-2xl font-bold text-blue-900">
+            Today's Tasks
+          </h2>
         </div>
-        <h2 className="text-2xl font-bold text-blue-900">Today's Tasks</h2>
+        <button
+          onClick={() => navigate("/today")}
+          className="text-blue-600 flex items-center gap-1 group text-sm hover:text-blue-800 transition-colors"
+        >
+          View all
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </button>
       </div>
 
       <motion.div
@@ -56,7 +68,7 @@ const TodayTasksCard = () => {
         {todaysTasks.map((task, index) => (
           <motion.div
             key={task._id}
-            className="group flex items-start gap-3 p-4 hover:bg-blue-50 rounded-xl transition-all duration-300 border border-transparent hover:border-blue-100"
+            className="group flex items-start gap-3 p-3 md:p-4 hover:bg-blue-50 rounded-xl transition-all duration-300 border border-transparent hover:border-blue-100"
             variants={itemVariants}
             custom={index}
             whileHover={{ scale: 1.01 }}
@@ -74,28 +86,25 @@ const TodayTasksCard = () => {
               {task.completed && <Check size={12} />}
             </motion.button>
 
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p
                 className={`font-medium ${
                   task.completed
                     ? "text-blue-400 line-through"
                     : "text-blue-900"
-                }`}
+                } truncate`}
               >
                 {task.title}
               </p>
-              <p className="text-sm text-gray-500">{task.description}</p>
-
-              <div className="flex items-center gap-2 mt-1">
-                {task.dueDate && (
-                  <span className="flex items-center gap-1 text-xs text-blue-500">
-                    <Clock size={12} />
-                    {new Date(task.dueDate).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                )}
+              {task.description && (
+                <p className="text-sm text-gray-500 line-clamp-2">
+                  {task.description}
+                </p>
+              )}
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="text-xs text-blue-500">
+                  {task.time || "Anytime"}
+                </span>
 
                 {task.priority === "high" && (
                   <motion.span
@@ -127,20 +136,32 @@ const TodayTasksCard = () => {
         ))}
       </motion.div>
 
-      <motion.div
-        className="mt-6 flex justify-end"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-      >
-        <button
-          onClick={() => navigate("/today")}
-          className="text-blue-600 flex items-center gap-1 group"
+      {/* Empty state */}
+      {todaysTasks.length === 0 && (
+        <motion.div
+          className="text-center py-8 md:py-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
         >
-          View all tasks
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </button>
-      </motion.div>
+          <motion.div
+            className="mx-auto w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center text-blue-400 mb-4"
+            animate={{
+              scale: [1, 1.05, 1],
+              rotate: [0, 5, 0],
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <CalendarClock size={24} className="md:w-8 md:h-8" />
+          </motion.div>
+          <h3 className="text-base md:text-lg font-medium text-blue-800">
+            No tasks for today
+          </h3>
+          <p className="text-sm text-blue-500 mt-1">
+            Your schedule is clear. Add tasks to get started!
+          </p>
+        </motion.div>
+      )}
 
       {/* Decorative corner elements */}
       <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-blue-400 rounded-tl-lg" />

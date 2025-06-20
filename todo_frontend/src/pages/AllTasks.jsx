@@ -6,8 +6,9 @@ import {
   Flag,
   Calendar,
   CheckCircle,
-  CircleX,
   Pencil,
+  X,
+  List,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AddTaskModal from "../components/AddTask";
@@ -94,7 +95,7 @@ const AllTasks = () => {
 
   return (
     <motion.div
-      className="space-y-6 min-h-[85vh]"
+      className="space-y-4 md:space-y-6 min-h-[85vh] px-2 md:px-0"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -113,11 +114,11 @@ const AllTasks = () => {
       />
 
       <motion.div
-        className="flex justify-between items-center"
+        className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0"
         variants={itemVariants}
       >
-        <div className="relative">
-          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-600">
+        <div className="relative w-full sm:w-auto">
+          <h1 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-600">
             All Tasks
           </h1>
           <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-indigo-600 to-cyan-600 rounded-full" />
@@ -125,7 +126,7 @@ const AllTasks = () => {
 
         <motion.button
           onClick={() => setShowTaskModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-cyan-600 hover:to-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-cyan-600 hover:to-indigo-600 text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -134,10 +135,10 @@ const AllTasks = () => {
         </motion.button>
       </motion.div>
 
-      <div className="flex items-center justify-center gap-2 mb-4">
+      <div className="flex items-center justify-center gap-2 mb-4 overflow-x-auto whitespace-nowrap py-2">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-6 py-2.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors min-w-[80px] ${
             filter === "all"
               ? "bg-indigo-100 text-indigo-800"
               : "text-gray-600 hover:bg-gray-100"
@@ -147,7 +148,7 @@ const AllTasks = () => {
         </button>
         <button
           onClick={() => setFilter("active")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-6 py-2.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors min-w-[80px] ${
             filter === "active"
               ? "bg-indigo-100 text-indigo-800"
               : "text-gray-600 hover:bg-gray-100"
@@ -157,7 +158,7 @@ const AllTasks = () => {
         </button>
         <button
           onClick={() => setFilter("completed")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-6 py-2.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors min-w-[80px] ${
             filter === "completed"
               ? "bg-indigo-100 text-indigo-800"
               : "text-gray-600 hover:bg-gray-100"
@@ -168,127 +169,171 @@ const AllTasks = () => {
       </div>
 
       <motion.div
-        className="bg-white/80 backdrop-blur-lg rounded-xl p-6 border border-indigo-100 shadow-lg relative overflow-hidden"
+        className="bg-white/80 backdrop-blur-lg rounded-xl p-3 sm:p-6 border border-indigo-100 shadow-lg relative overflow-hidden"
         variants={itemVariants}
       >
         {/* Decorative corner elements */}
-        <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg" />
-        <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg" />
-        <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg" />
-        <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-indigo-400 rounded-br-lg" />
+        <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg hidden sm:block" />
+        <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg hidden sm:block" />
+        <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg hidden sm:block" />
+        <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-indigo-400 rounded-br-lg hidden sm:block" />
 
         {filteredTasks.length > 0 ? (
-          <motion.div className="space-y-4" variants={containerVariants}>
+          <motion.div
+            className="space-y-3 sm:space-y-4"
+            variants={containerVariants}
+          >
             {filteredTasks.map((task, index) => (
               <motion.div
                 key={task._id}
-                className={`flex items-center gap-4 p-4 rounded-lg transition-colors group border border-transparent ${
+                className={`flex flex-col items-start gap-3 p-4 rounded-xl transition-colors group border ${
                   task.completed
-                    ? "hover:bg-purple-50 hover:border-purple-100"
-                    : "hover:bg-indigo-50 hover:border-indigo-100"
-                }`}
+                    ? "bg-purple-50/50 hover:bg-purple-50 border-purple-100/50"
+                    : "bg-white hover:bg-indigo-50/50 border-indigo-100/50"
+                } shadow-sm`}
                 variants={itemVariants}
                 custom={index}
                 whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div
-                  className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                    task.completed
-                      ? "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-600"
-                      : "bg-gradient-to-r from-indigo-100 to-cyan-100 text-indigo-600"
-                  }`}
-                >
-                  {task.completed ? (
-                    <CheckCircle size={20} />
-                  ) : (
-                    <Calendar size={20} />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3
-                    className={`font-medium ${
+                {/* Top Row - Icon + Title + Actions */}
+                <div className="flex items-start w-full gap-3">
+                  {/* Status Icon */}
+                  <div
+                    className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
                       task.completed
-                        ? "text-purple-900 line-through opacity-70"
-                        : "text-indigo-900"
-                    }`}
+                        ? "bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600"
+                        : "bg-gradient-to-br from-indigo-100 to-blue-100 text-indigo-600"
+                    } shadow-inner`}
                   >
-                    {task.title}
-                  </h3>
-                  <p className="text-sm text-gray-500">{task.description}</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span
-                      className={`text-sm flex items-center gap-1 ${
-                        task.completed ? "text-purple-500" : "text-indigo-500"
+                    {task.completed ? (
+                      <CheckCircle size={20} className="opacity-90" />
+                    ) : (
+                      <Calendar size={20} className="opacity-90" />
+                    )}
+                  </div>
+
+                  {/* Title and Description */}
+                  <div className="flex-1 min-w-0">
+                    <h3
+                      className={`font-medium text-base ${
+                        task.completed
+                          ? "text-purple-900 line-through opacity-80"
+                          : "text-gray-800"
                       }`}
                     >
-                      {task.completed
-                        ? `Completed on ${formatDate(task.completedAt)}`
-                        : `Due: ${formatDate(task.dueDate)}`}
+                      {task.title}
+                    </h3>
+                    {task.description && (
+                      <p className="text-sm text-gray-500 line-clamp-2 mt-1">
+                        {task.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Action Buttons (visible on hover/focus) */}
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    {!task.completed && (
+                      <button
+                        className="p-2 rounded-lg text-indigo-600 hover:bg-indigo-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        onClick={() => handleToggleComplete(task._id)}
+                        aria-label="Complete task"
+                      >
+                        <Check size={18} />
+                      </button>
+                    )}
+                    <button
+                      className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+                      onClick={() => handleDeleteTask(task._id)}
+                      aria-label="Delete task"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bottom Row - Metadata */}
+                <div className="w-full pl-15">
+                  {" "}
+                  {/* 15 = icon width + gap */}
+                  {/* Due Date/Completion Date */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span
+                      className={`text-xs flex items-center gap-1.5 ${
+                        task.completed ? "text-purple-600" : "text-indigo-600"
+                      }`}
+                    >
+                      {task.completed ? (
+                        <>
+                          <CheckCircle size={12} className="opacity-70" />
+                          Completed {formatDate(task.completedAt)}
+                        </>
+                      ) : (
+                        <>
+                          <Calendar size={12} className="opacity-70" />
+                          Due {formatDate(task.dueDate)}
+                        </>
+                      )}
                     </span>
 
+                    {/* List Badge */}
                     {task.list && (
                       <span
-                        className="text-xs px-2 py-0.5 rounded-full border flex items-center gap-1"
+                        className="text-xs px-2.5 py-1 rounded-lg border flex items-center gap-1.5"
                         style={{
                           backgroundColor: `${task.list.color}10`,
-                          borderColor: `${task.list.color}30`,
+                          borderColor: `${task.list.color}20`,
                           color: task.list.color,
                         }}
                       >
-                        {task.list.name}
+                        <List size={12} className="opacity-80" />
+                        {task.name}
                       </span>
                     )}
 
-                    {!task.completed && task.priority === "high" && (
-                      <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100 flex items-center gap-1">
-                        <Flag size={10} /> High priority
-                      </span>
-                    )}
-                    {!task.completed && task.priority === "medium" && (
-                      <span className="text-xs bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full border border-yellow-100 flex items-center gap-1">
-                        <Flag size={10} /> Medium
-                      </span>
-                    )}
-                    {!task.completed && task.priority === "low" && (
-                      <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full border border-green-100 flex items-center gap-1">
-                        <Flag size={10} /> Low
+                    {/* Priority Badge */}
+                    {!task.completed && task.priority && (
+                      <span
+                        className={`text-xs px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${
+                          task.priority === "high"
+                            ? "bg-red-50/80 border-red-100 text-red-600"
+                            : task.priority === "medium"
+                            ? "bg-yellow-50/80 border-yellow-100 text-yellow-600"
+                            : "bg-green-50/80 border-green-100 text-green-600"
+                        }`}
+                      >
+                        <Flag size={12} className="opacity-80" />
+                        {task.priority === "high"
+                          ? "High"
+                          : task.priority === "medium"
+                          ? "Medium"
+                          : "Low"}
                       </span>
                     )}
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!task.completed && (
-                    <button
-                      className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors"
-                      onClick={() => handleToggleComplete(task._id)}
-                    >
-                      <Check size={16} />
-                    </button>
-                  )}
-                  {!task.completed && (
+                  {/* Edit Button (mobile only) */}
+                  <div className="mt-3 sm:hidden w-full">
                     <button
                       onClick={() => handleEditTask(task)}
-                      className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors"
+                      className="w-full py-2 text-sm rounded-lg bg-indigo-600 text-white flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors"
                     >
-                      <Pencil size={16} />
+                      <Pencil size={14} />
+                      Edit Task
                     </button>
-                  )}
-                  <button onClick={() => handleDeleteTask(task._id)}>
-                    <CircleX className="w-8 h-8 text-red-500 hover:text-red-600 transition-colors group-hover:opacity-100 opacity-0" />
-                  </button>
+                  </div>
                 </div>
               </motion.div>
             ))}
           </motion.div>
         ) : (
-          <div className="text-center py-12">
-            <div className="mx-auto w-24 h-24 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center text-indigo-400 mb-4">
-              <ListTodo size={32} />
+          <div className="text-center py-8 sm:py-12">
+            <div className="mx-auto w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center text-indigo-400 mb-4">
+              <ListTodo size={24} className="sm:w-8 sm:h-8" />
             </div>
-            <h3 className="text-lg font-medium text-indigo-800">
+            <h3 className="text-base sm:text-lg font-medium text-indigo-800">
               No tasks found
             </h3>
-            <p className="text-indigo-500 mt-1">
+            <p className="text-sm sm:text-base text-indigo-500 mt-1 px-4">
               {filter === "all" &&
                 "You don't have any tasks yet. Create one to get started."}
               {filter === "active" && "You don't have any active tasks."}
