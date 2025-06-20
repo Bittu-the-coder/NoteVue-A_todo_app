@@ -182,5 +182,3 @@ This project is licensed under the ISC License.
 - React team for the amazing UI library
 - Tiptap for the powerful rich text editor
 - All other open-source contributors
-
-[Add your YouTube demo video link here when available]
