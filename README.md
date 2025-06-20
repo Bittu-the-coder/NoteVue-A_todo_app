@@ -2,7 +2,9 @@
 
 NoteVue is a full-stack productivity application that combines task management with note-taking capabilities, helping users organize their work and thoughts in one place.
 
-[Watch Demo Video](YOUR_YOUTUBE_LINK_HERE)
+[![Watch on YouTube](./todo_frontend/Notevue.png)](https://youtu.be/tKxTntrzGrk?si=EYernQ4hRbaUjAt6)
+
+[Watch Demo Video](https://youtu.be/tKxTntrzGrk?si=EYernQ4hRbaUjAt6)
 
 ## Features
 
