@@ -63,7 +63,7 @@ const Dashboard = () => {
   const [todaysTasks, setTodaysTasks] = useState([]);
   const { getTodayTasks } = useTaskContext();
   const { notes } = useNotesContext();
-  console.log("Notes in Dashboard:", notes);
+  // console.log("Notes in Dashboard:", notes);
 
   React.useEffect(() => {
     const fetchUserData = async () => {

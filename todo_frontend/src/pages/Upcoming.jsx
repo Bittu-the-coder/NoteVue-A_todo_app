@@ -139,7 +139,10 @@ const UpcomingTasks = () => {
                     <div className="flex flex-wrap items-center gap-2 mt-3">
                       <span className="text-xs px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 flex items-center gap-1.5">
                         <Calendar size={12} />
-                        {task.date} • {task.time}
+                        {new Date(task.dueDate).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}{" "}
                       </span>
 
                       {task.priority === "high" && (

@@ -3,7 +3,7 @@ import {
   Calendar,
   Plus,
   Check,
-  Flag,
+  CheckCircle,
   Pencil,
   X,
   Trash2,
