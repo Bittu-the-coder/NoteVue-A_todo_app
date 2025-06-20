@@ -53,7 +53,7 @@ const Profile = () => {
       try {
         const response = await getMe();
         setUserData(response);
-        console.log("userData:", response);
+        // console.log("userData:", response);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

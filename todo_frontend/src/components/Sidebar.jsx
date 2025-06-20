@@ -74,7 +74,7 @@ const Sidebar = () => {
       try {
         const response = await getMe();
         setUserData(response);
-        console.log("userData:", response);
+        // console.log("userData:", response);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -93,7 +93,7 @@ const Sidebar = () => {
         );
       } else {
         // Creating a new list
-        console.log("Adding list:", listData);
+        // console.log("Adding list:", listData);
         const newList = await addList(listData);
         setLists((prevLists) => [...prevLists, newList]);
       }
@@ -122,7 +122,7 @@ const Sidebar = () => {
   };
 
   const handleAddTag = (tagData) => {
-    console.log("Adding tag:", tagData);
+    // console.log("Adding tag:", tagData);
     setTags((prevTags) => [...prevTags, tagData]);
   };
   const handleDeleteTag = async (id, e) => {
@@ -174,7 +174,7 @@ const Sidebar = () => {
     const fetchTags = async () => {
       try {
         const response = await getTags();
-        console.log("Fetched tags:", response);
+        // console.log("Fetched tags:", response);
         setTags(response);
       } catch (error) {
         console.error("Error fetching tags:", error);
@@ -193,7 +193,7 @@ const Sidebar = () => {
     const fetchLists = async () => {
       try {
         const response = await getLists();
-        console.log("Fetched lists:", response);
+        // console.log("Fetched lists:", response);
         setLists(response);
       } catch (error) {
         console.error("Error fetching lists:", error);

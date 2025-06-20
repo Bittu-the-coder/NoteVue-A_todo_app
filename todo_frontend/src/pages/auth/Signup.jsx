@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { API_URL } from "../../config";
+import { register } from "../../services/auth";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -61,11 +60,11 @@ const Signup = () => {
     setApiError("");
 
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, {
-        username: formData.name.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-      });
+      const response = await register(
+        formData.name,
+        formData.email,
+        formData.password
+      );
 
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
@@ -99,7 +98,7 @@ const Signup = () => {
 
   const handleGoogleAuth = () => {
     // Implement Google OAuth redirect
-    window.location.href = `${API_URL}/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
   };
 
   return (

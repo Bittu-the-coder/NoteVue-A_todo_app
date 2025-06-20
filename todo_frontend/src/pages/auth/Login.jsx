@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { API_URL } from "../../config";
-import axios from "axios";
+import { login } from "../../services/auth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -62,12 +61,8 @@ const Login = () => {
     setErrors((prev) => ({ ...prev, general: "" }));
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email: formData.email.trim(),
-        password: formData.password,
-      });
-
-      localStorage.setItem("token", response.data.token);
+      const response = await login(formData.email, formData.password);
+      localStorage.setItem("token", response.token);
       navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);

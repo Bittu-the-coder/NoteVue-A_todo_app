@@ -42,7 +42,7 @@ const UpcomingTasks = () => {
     setUpcomingTask(tasks);
   }, [getUpcomingTasks]);
 
-  console.log("upcoming-------------", upcomingTasks);
+  // console.log("upcoming-------------", upcomingTasks);
 
   return (
     <motion.div

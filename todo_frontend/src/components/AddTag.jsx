@@ -10,7 +10,7 @@ const AddTagModal = ({ isOpen, onClose, onSubmit }) => {
     e.preventDefault();
     const tag = await addTag({ name });
     setName("");
-    console.log("Tag added:", tag);
+    // console.log("Tag added:", tag);
     onSubmit(tag);
     onClose();
   };

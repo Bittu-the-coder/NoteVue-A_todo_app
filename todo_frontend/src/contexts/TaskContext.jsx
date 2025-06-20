@@ -254,7 +254,7 @@ const TaskProvider = ({ children }) => {
     const todayTasks = tasks.filter((task) => {
       // Skip tasks without dueDate
       if (!task.dueDate) {
-        console.log(`Task ${task.title}: No due date`);
+        // console.log(`Task ${task.title}: No due date`);
         return false;
       }
 
@@ -279,7 +279,7 @@ const TaskProvider = ({ children }) => {
 
     const upcomingTasks = tasks.filter((task) => {
       if (!task.dueDate) {
-        console.log(`Task "${task.title}": No due date`);
+        // console.log(`Task "${task.title}": No due date`);
         return false;
       }
 

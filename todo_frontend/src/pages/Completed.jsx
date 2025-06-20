@@ -48,7 +48,7 @@ const CompletedTasks = () => {
     }
   };
   const handleDeleteTask = async (taskId) => {
-    console.log("Deleting task with ID:", taskId);
+    // console.log("Deleting task with ID:", taskId);
     try {
       await removeTask(taskId);
     } catch (error) {
