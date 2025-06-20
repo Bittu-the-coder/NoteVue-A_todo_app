@@ -8,7 +8,7 @@ const noteSchema = new mongoose.Schema({
   },
   color: {
     type: String,
-    default: '#FEF08A' // yellow-100
+    default: '#FEF08A'
   },
   user: {
     type: mongoose.Schema.ObjectId,

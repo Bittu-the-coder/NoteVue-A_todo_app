@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { X, Calendar, Flag, List, Tag, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,28 +34,31 @@ const overlayVariants = {
   exit: { opacity: 0 },
 };
 
-const AddTaskModal = ({ isOpen, onClose, className }) => {
+const AddTaskModal = ({
+  isOpen,
+  onClose,
+  className,
+  isEditing = false,
+  taskId = null,
+  task = null,
+  onSuccess = () => {},
+}) => {
   const [lists, setLists] = useState([]);
   const [tags, setTags] = useState([]);
-  const [loadingLists, setLoadingLists] = useState(true);
-  const [loadingTags, setLoadingTags] = useState(true);
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
-    completed: false,
     dueDate: null,
     priority: "medium",
     listId: "",
     tagIds: [],
   });
-  const { createTask, resetNewTaskForm } = useTaskContext();
+  const { createTask, resetNewTaskForm, editTask } = useTaskContext();
 
   const getAllLists = async () => {
     try {
-      setLoadingLists(true);
       const response = await getLists();
       setLists(response);
-      setLoadingLists(false);
       return response;
     } catch (error) {
       console.error("Error fetching lists:", error);
@@ -64,10 +68,8 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
 
   const getAllTags = async () => {
     try {
-      setLoadingTags(true);
       const response = await getTags();
       setTags(response);
-      setLoadingTags(false);
       return response;
     } catch (error) {
       console.error("Error fetching tags:", error);
@@ -75,27 +77,69 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!taskData.title.trim()) {
-      alert("Task title is required");
-      return;
-    }
-    const newTask = {
-      title: taskData.title,
-      description: taskData.description || "",
-      completed: false,
-      dueDate: taskData.dueDate,
-      priority: taskData.priority,
-      list: taskData.listId,
-      tags: taskData.tagIds,
-    };
-    console.log("new task", newTask);
-
-    createTask(newTask);
-    resetNewTaskForm();
-    onClose();
+  const newTask = {
+    title: taskData.title,
+    description: taskData.description || "",
+    dueDate: taskData.dueDate,
+    priority: taskData.priority,
+    list: taskData.listId,
+    tags: taskData.tagIds,
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!taskData.title.trim()) {
+  //     alert("Task title is required");
+  //     return;
+  //   }
+  //   const newTask = {
+  //     title: taskData.title,
+  //     description: taskData.description || "",
+  //     dueDate: taskData.dueDate,
+  //     priority: taskData.priority,
+  //     list: taskData.listId,
+  //     tags: taskData.tagIds,
+  //   };
+  //   console.log("new task", newTask);
+
+  //   createTask(newTask);
+  //   resetNewTaskForm();
+  //   onSuccess();
+  //   onClose();
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEditing) {
+        await editTask(taskId, newTask);
+      } else {
+        await createTask(newTask);
+      }
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error saving task:", error);
+    }
+  };
+
+  // const handleEditTask = (id, task) => {
+  //   if (!task.title.trim()) {
+  //     alert("Task title is required");
+  //     return;
+  //   }
+  //   const updatedTask = {
+  //     title: task.title,
+  //     description: task.description || "",
+  //     dueDate: task.dueDate,
+  //     priority: task.priority,
+  //     list: task.listId,
+  //     tags: task.tagIds,
+  //   };
+  //   editTask(id, updatedTask);
+  //   resetNewTaskForm();
+  //   onClose();
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,6 +155,19 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isEditing && task) {
+      setTaskData({
+        title: task.title || "",
+        description: task.description || "",
+        dueDate: task.dueDate ? new Date(task.dueDate) : null,
+        priority: task.priority || "medium",
+        listId: task.list?._id || task.list || "",
+        tagIds: task.tags?.map((tag) => tag._id) || task.tags || [],
+      });
+    }
+  }, [isEditing, task]);
 
   if (!isOpen) return null;
 
@@ -136,7 +193,7 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
           >
             <div className="flex justify-between items-center p-4 border-b border-blue-100">
               <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                Add New Task
+                {isEditing ? "Edit your Task" : "Add New Task"}
               </h3>
               <motion.button
                 onClick={onClose}
@@ -216,7 +273,7 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
                   <List className="w-4 h-4 text-blue-600" /> List
                 </label>
                 <select
-                  value={taskData.listId}
+                  value={isEditing ? task.listId : taskData.listId}
                   onChange={(e) => {
                     setTaskData({ ...taskData, listId: e.target.value });
                   }}
@@ -239,7 +296,7 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
                   {tags.map((tag) => (
                     <motion.button
                       type="button"
-                      key={tag.id}
+                      key={tag._id}
                       onClick={() => {
                         const updatedTags = taskData.tagIds.includes(tag._id)
                           ? taskData.tagIds.filter((id) => id !== tag._id)
@@ -277,7 +334,7 @@ const AddTaskModal = ({ isOpen, onClose, className }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Add Task
+                  {isEditing ? "Save Changes" : "Add Task"}
                 </motion.button>
               </div>
             </form>

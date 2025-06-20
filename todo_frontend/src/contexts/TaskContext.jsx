@@ -292,6 +292,19 @@ const TaskProvider = ({ children }) => {
     return upcomingTasks;
   }, [tasks]);
 
+  const getWeeklyTasks = useCallback(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    return tasks.filter((task) => {
+      if (!task.dueDate) return false;
+      const taskDate = new Date(task.dueDate);
+      return taskDate >= today && taskDate < nextWeek;
+    });
+  }, [tasks]);
+
   return (
     <TaskContext.Provider
       value={{
@@ -313,6 +326,7 @@ const TaskProvider = ({ children }) => {
         resetNewTaskForm,
         getTodayTasks,
         getUpcomingTasks,
+        getWeeklyTasks,
       }}
     >
       {children}

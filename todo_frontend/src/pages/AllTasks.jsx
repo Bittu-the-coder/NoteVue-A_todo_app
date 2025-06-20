@@ -7,6 +7,7 @@ import {
   Calendar,
   CheckCircle,
   CircleX,
+  Pencil,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AddTaskModal from "../components/AddTask";
@@ -39,28 +40,30 @@ const AllTasks = () => {
   const [filter, setFilter] = useState("all"); // "all", "active", "completed"
   const { toggleTaskComplete, getAllTasks, removeTask } = useTaskContext();
   const [tasks, setTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+  };
+
+  const fetchTasks = async () => {
+    try {
+      const fetchedTasks = await getAllTasks();
+      setTasks(fetchedTasks);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const fetchedTasks = await getAllTasks();
-        setTasks(fetchedTasks);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-
     fetchTasks();
   }, []);
 
   const handleToggleComplete = async (taskId) => {
     try {
       await toggleTaskComplete(taskId);
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task._id === taskId ? { ...task, completed: !task.completed } : task
-        )
-      );
+      await fetchTasks(); // Refresh the task list
     } catch (error) {
       console.error("Error toggling task completion:", error);
     }
@@ -69,7 +72,7 @@ const AllTasks = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       await removeTask(taskId);
-      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+      await fetchTasks(); // Refresh the task list
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -99,7 +102,14 @@ const AllTasks = () => {
       {/* Modal components */}
       <AddTaskModal
         isOpen={showTaskModal}
-        onClose={() => setShowTaskModal(false)}
+        onClose={() => {
+          setShowTaskModal(false);
+          setEditingTask(null);
+        }}
+        isEditing={!!editingTask}
+        taskId={editingTask?._id}
+        task={editingTask}
+        onSuccess={fetchTasks}
       />
 
       <motion.div
@@ -253,6 +263,14 @@ const AllTasks = () => {
                       onClick={() => handleToggleComplete(task._id)}
                     >
                       <Check size={16} />
+                    </button>
+                  )}
+                  {!task.completed && (
+                    <button
+                      onClick={() => handleEditTask(task)}
+                      className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors"
+                    >
+                      <Pencil size={16} />
                     </button>
                   )}
                   <button onClick={() => handleDeleteTask(task._id)}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Plus, Check, Flag, CircleX } from "lucide-react";
+import { Calendar, Plus, Check, Flag, CircleX, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import AddTaskModal from "../components/AddTask";
 import { useTaskContext } from "../contexts/TaskContext";
@@ -30,6 +30,12 @@ const UpcomingTasks = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const { getUpcomingTasks, removeTask } = useTaskContext();
   const [upcomingTasks, setUpcomingTask] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+  };
 
   useEffect(() => {
     const tasks = getUpcomingTasks();
@@ -48,7 +54,13 @@ const UpcomingTasks = () => {
       {/* Modal components */}
       <AddTaskModal
         isOpen={showTaskModal}
-        onClose={() => setShowTaskModal(false)}
+        onClose={() => {
+          setShowTaskModal(false);
+          setEditingTask(null);
+        }}
+        isEditing={!!editingTask}
+        taskId={editingTask?._id}
+        task={editingTask}
       />
 
       <motion.div
@@ -120,6 +132,14 @@ const UpcomingTasks = () => {
                     )}
                   </div>
                 </div>
+                {!task.completed && (
+                  <button
+                    onClick={() => handleEditTask(task)}
+                    className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                )}
                 <CircleX
                   onClick={() => removeTask(task._id)}
                   className="text-red-600 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity"

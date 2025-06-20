@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Plus, Check, Flag, CircleX } from "lucide-react";
+import { Calendar, Plus, Check, Flag, CircleX, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import AddTaskModal from "../components/AddTask";
 import { useTaskContext } from "../contexts/TaskContext";
@@ -30,6 +30,12 @@ const TodayTasks = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [todaysTasks, setTodaysTasks] = useState([]);
   const { getTodayTasks, toggleTaskComplete, removeTask } = useTaskContext();
+  const [editingTask, setEditingTask] = useState(null);
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+  };
 
   const tasks = todaysTasks;
 
@@ -53,7 +59,13 @@ const TodayTasks = () => {
       {/* Modal components */}
       <AddTaskModal
         isOpen={showTaskModal}
-        onClose={() => setShowTaskModal(false)}
+        onClose={() => {
+          setShowTaskModal(false);
+          setEditingTask(null);
+        }}
+        isEditing={!!editingTask}
+        taskId={editingTask?._id}
+        task={editingTask}
       />
 
       <motion.div
@@ -233,6 +245,14 @@ const TodayTasks = () => {
                   >
                     <Check size={16} />
                   </motion.button>
+                  {!task.completed && (
+                    <button
+                      onClick={() => handleEditTask(task)}
+                      className="w-8 h-8 rounded-full border border-indigo-200 flex items-center justify-center text-indigo-500 hover:bg-indigo-100 transition-colors"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
                   <motion.button
                     onClick={() => removeTask(task._id)}
                     whileHover={{ scale: 1.1, color: "#EF4444" }}

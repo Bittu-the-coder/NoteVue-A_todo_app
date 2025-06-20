@@ -1,39 +1,39 @@
 import API from "./api";
 
-const addTask = async (taskData) => {
+const addNote = async (noteData) => {
   try {
-    const response = await API.post('/tasks', taskData);
+    const response = await API.post('/notes', noteData);
     return response.data.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network error');
   }
 }
 
-const getTasks = async () => {
+const getNotes = async () => {
   try {
-    const response = await API.get('/tasks');
+    const response = await API.get('/notes');
     return response.data.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network error');
   }
 }
 
-const updateTask = async (id, taskData) => {
+const updateNote = async (noteId, noteData) => {
   try {
-    const response = await API.put(`/tasks/${id}`, taskData);
+    const response = await API.put(`/notes/${noteId}`, noteData);
     return response.data.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network error');
   }
 }
 
-const deleteTask = async (id) => {
+const deleteNote = async (noteId) => {
   try {
-    const response = await API.delete(`/tasks/${id}`);
-    return response.data;
+    const response = await API.delete(`/notes/${noteId}`);
+    return response.data.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network error');
   }
 }
 
-export { addTask, getTasks, updateTask, deleteTask };
+export { addNote, getNotes, updateNote, deleteNote };
